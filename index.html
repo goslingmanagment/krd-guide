@@ -245,6 +245,7 @@ h3.venue {
 .chip.ok    { color: var(--good); }
 .chip.warn  { color: var(--warn); }
 .chip.plain { color: var(--muted); }
+.chip.bad   { color: var(--bad); }
 
 .why { margin: 0 0 10px; max-width: 78ch; }
 
@@ -476,7 +477,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Японская кухня · Японский сад парка Галицкого</span><h3 class="venue">Ryotei</h3></div>
-          <div class="scores"><span class="price">₽₽₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 10.7к</small></span><span class="price">₽₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">№4 юга России · WhereToEat</span><span class="chip award">шорт-лист России 2026</span><span class="chip award">Ultima Guide</span><span class="chip warn">депозит + бронь сильно заранее</span></div>
         <p class="why">Главный вау-ресторан города: суши и вагю с видом на крупнейший японский сад за пределами Японии. Сомелье года по версии премии, 50+ позиций нихонсю по бокалам.</p>
@@ -558,7 +559,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Кубанская кухня из печи · исторический центр</span><h3 class="venue">The Печь</h3></div>
-          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="rate">5.0<small>Я · 4.7к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">WhereToEat юг · №24</span><span class="chip plain">шеф Андрей Матюха</span></div>
         <p class="why">Флагман главного шефа города (Bocuse d'Or Russia). Самый надёжный выбор «за едой»: всё строится вокруг живой русской печи. Сюда же переехало наследие закрывшегося «Угли-Угли» — та же команда и печная школа.</p>
@@ -621,7 +622,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">3</span>
           <div class="card-title"><span class="genre">Рыба и морепродукты · панорамный этаж</span><h3 class="venue">The Great Kraken</h3></div>
-          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="rate">5.0<small>Я · 1.8к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">лучшая пивная карта · WhereToEat</span><span class="chip plain">лонг-лист 2026</span></div>
         <p class="why">Устрицы, крабы и морские ежи из аквариума, икорный бар, raw-подача по итальянско-японским рецептам. Панорамные окна на закат и веранда.</p>
@@ -684,7 +685,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">4</span>
           <div class="card-title"><span class="genre">Мясо · собственный цех и выдержка</span><h3 class="venue">Скотина</h3></div>
-          <div class="scores"><span class="rate">4.6<small>2ГИС</small></span><span class="price">₽₽₽</span></div>
+          <div class="scores"><span class="rate">4.6<small>2ГИС</small></span><span class="rate">4.9<small>Я · 4.2к</small></span><span class="price">₽₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip ok">пт-сб до 01:00</span><span class="chip plain">кубанское мясо</span></div>
         <p class="why">Концептуальный мясной: собственная разделка и выдержка местного мяса, угольные печи, субпродукты и редкие отрубы. Вариант, когда хочется засидеться позже 23:00.</p>
@@ -749,7 +750,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">5</span>
           <div class="card-title"><span class="genre">Итальянское бистро · кластер Горького/Чапаева</span><h3 class="venue">Ave Bistro</h3></div>
-          <div class="scores"><span class="rate">4.7<small>2ГИС</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.7<small>2ГИС</small></span><span class="rate">5.0<small>Я · 1.3к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">WhereToEat юг · №15</span><span class="chip plain">шеф Андрей Солодин</span></div>
         <p class="why">Классика Италии в авторской подаче: паста и тартары, которые в отзывах называют лучшими в городе. Стильно и без пафоса.</p>
@@ -812,7 +813,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">6</span>
           <div class="card-title"><span class="genre">Неаполитанская пицца · печь в зале</span><h3 class="venue">Кубана Тоскана</h3></div>
-          <div class="scores"><span class="rate">5.0<small>2ГИС · 441</small></span><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>2ГИС · 441</small></span><span class="rate">5.0<small>Я · 2.4к</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span></div>
         <p class="why">Неаполитанские традиции на кубанский лад: печь прямо в зале, тесто на глазах. Самый доступный чек в этом списке при рейтинге, которому позавидует любой файн-дайнинг.</p>
@@ -874,7 +875,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">7</span>
           <div class="card-title"><span class="genre">Греческая нео-таверна · панорамный зал</span><h3 class="venue">Яя (Yiayia)</h3></div>
-          <div class="scores"><span class="rate">5.0<small>· ~1300</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 2.1к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat</span></div>
         <p class="why">Масштабная греческая нео-таверна на месте легендарного Fratelli: мезе, мусака, хачапури и гриль, своя кофейня и фонтан. Пятёрка при ~1300 отзывов — редкое сочетание размаха и стабильности.</p>
@@ -949,7 +950,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">8</span>
           <div class="card-title"><span class="genre">Современная южнорусская кухня · самый центр</span><h3 class="venue">Катенька-Катюша</h3></div>
-          <div class="scores"><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 7.7к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span></div>
         <p class="why">«Кухня прекрасного города»: курник, вареники и староказачьи яхны из локальных продуктов в двухэтажном особняке на Красной. Порции большие, цены демократичные — сильная локальная кухня без файн-дайнинг-пафоса.</p>
@@ -1008,7 +1009,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">9</span>
           <div class="card-title"><span class="genre">Южная кухня · особняк с концертами</span><h3 class="venue">Тёплые страны</h3></div>
-          <div class="scores"><span class="rate">4.7<small>· 270</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.7<small>2ГИС · 270</small></span><span class="rate">5.0<small>Я · 1.6к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip ok">пт-сб до 01:00</span></div>
         <p class="why">«Саммит южной кухни»: уха и кебабы в особняке с живой музыкой и летней террасой. Мягкий южный уют — вариант неспешного длинного вечера.</p>
@@ -1066,7 +1067,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">10</span>
           <div class="card-title"><span class="genre">Паназиатский гастробар · группа «Мадьяр»</span><h3 class="venue">Джимми Чу</h3></div>
-          <div class="scores"><span class="rate">4.8<small>· 368</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.8<small>2ГИС · 368</small></span><span class="rate">5.0<small>Я · 3.3к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat</span></div>
         <p class="why">Азиатский рестобар главной ресторанной группы города: утка по-пекински, цветные дим-самы, крисп-суши, вонтоны в коллагеновом бульоне; коктейли на соджу, юдзу и личи.</p>
@@ -1111,7 +1112,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">11</span>
           <div class="card-title"><span class="genre">Европейская и венгерская кухня · сеть</span><h3 class="venue">Мадьяр</h3></div>
-          <div class="scores"><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 903</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span><span class="chip plain">с 2001 года</span></div>
         <p class="why">Первая гастро-легенда города: с этого ресторана началась крупнейшая ресторанная группа Краснодара. Семейная классика, проверенная двадцатью пятью годами — способ понять, как ест сам Краснодар.</p>
@@ -1161,7 +1162,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">12</span>
           <div class="card-title"><span class="genre">Кубанская и казачья кухня · берег реки</span><h3 class="venue">Станъ</h3></div>
-          <div class="scores"><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 6.2к</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span><span class="chip ok">беседки у воды</span></div>
         <p class="why">Казачий колорит на берегу Кубани: летние беседки, картины кубанских художников, борщ и вареники в полном антураже. Работает на впечатление — сюда водят гостей города.</p>
@@ -1226,7 +1227,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">13</span>
           <div class="card-title"><span class="genre">Ресторан-бар-клуб · весь вечер в одном месте</span><h3 class="venue">Архитектор</h3></div>
-          <div class="scores"><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.8<small>Я · 3.6к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat</span></div>
         <p class="why">Формат «пришёл на ужин — остался до ночи»: кухня в авторской подаче, коктейльный бар, дальше вечеринки с живой музыкой и диджеями. Красивое необычное пространство на Красной.</p>
@@ -1266,12 +1267,12 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">14</span>
           <div class="card-title"><span class="genre">Бургер-бар · быстрый и дешёвый слот</span><h3 class="venue">Нахлебник</h3></div>
-          <div class="scores"><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 3.5к</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip plain">«бургерная в статусе легенды»</span></div>
         <p class="why">Единственный ₽-формат, который инспекторы Ultima сочли достойным гида: «Гоги» с бараниной, «Бруклин» с беконом. Когда нужен сытный перекус без церемоний.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">бургер «Гоги» с бараниной</span><span class="dish">«Бруклин» с беконом</span></div>
-        <p class="tip"><b>Знать:</b> оценки на картах средние — это история про бургеры и скорость, не про сервис.</p>
+        <p class="tip good"><b>Цифры:</b> Яндекс даёт 5.0 при 3.5 тыс оценок — формат простой, но городом любимый.</p>
         </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
   <circle cx="320" cy="165" r="152" fill="var(--accent-soft)" fill-opacity="0.12"/>
   <path d="M285 46C272 30 292 16 282 2M330 40C322 24 340 12 332 -2" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
@@ -1295,7 +1296,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">15</span>
           <div class="card-title"><span class="genre">Авторская кухня · парк Галицкого</span><h3 class="venue">Cafe Krasnodar</h3></div>
-          <div class="scores"><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 13.8к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat 2026</span><span class="chip ok">трансфер по парку</span></div>
         <p class="why">Вариант «поужинать в парке» без гастрономических амбиций Ryotei: спокойно, красиво, рядом стадион и вечерняя прогулка.</p>
@@ -1351,7 +1352,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Спикизи · авторские коктейли</span><h3 class="venue">Детектив, где вы?</h3></div>
-          <div class="scores"><span class="rate">4.8<small>2ГИС · 405</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.8<small>2ГИС · 405</small></span><span class="rate">5.0<small>Я · 1.1к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip award">шорт-лист Where2Drink 2026</span><span class="chip award">топ-10 России 2025</span><span class="chip award">Ultima Guide</span><span class="chip warn">бронь обязательна</span></div>
         <p class="why">Единственный бар города в топ-54 страны. Джаз, приглушённый свет, коктейли-ребусы, izakaya room с азиатскими миксами, винная карта «Север / Юг».</p>
@@ -1386,7 +1387,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Хоровод-бар · настойки и славянская тьма</span><h3 class="venue">Бирюльки</h3></div>
-          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="rate">5.0<small>Я · 193</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip plain">лонг-лист Where2Drink</span><span class="chip ok">пт-сб танцы до 03:00</span></div>
         <p class="why">Тёмная сторона славянских сказок: коктейли только на русском продукте — локальные травы, ягоды, настойки. Подача — отдельное шоу. Две минуты пешком от «Детектива».</p>
@@ -1428,7 +1429,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">3</span>
           <div class="card-title"><span class="genre">Коктейли и танцпол · эстетика 80–90-х</span><h3 class="venue">Видеосалон закрыт</h3></div>
-          <div class="scores"><span class="rate">4.8<small>~1900 оценок</small></span><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">4.8<small>2ГИС · 1.9к</small></span><span class="rate">5.0<small>Я · 1.4к</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip ok">главный танцующий бар центра</span></div>
         <p class="why">Мир видеосалонов и поп-культуры: шумно, весело, много людей. Идеальная вторая точка после медленного «Детектива» — заходить к 22:00–23:00, когда раскачивается.</p>
@@ -1467,7 +1468,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">4</span>
           <div class="card-title"><span class="genre">Крафт, сидры, миды · старый центр</span><h3 class="venue">Rail bottle shop</h3></div>
-          <div class="scores"><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 520</small></span><span class="price">₽</span></div>
         </header>
         <div class="chips"><span class="chip plain">лонг-лист Where2Drink</span></div>
         <p class="why">Лучший пивной формат города: краны местной пивоварни, холодильник с редкими бутылками, новинки раньше всех. Трамваи под окнами задают атмосферу.</p>
@@ -1533,12 +1534,11 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">5</span>
           <div class="card-title"><span class="genre">Вино и сыр · тихий формат</span><h3 class="venue">Хлеб да Винчик</h3></div>
-          <div class="scores"><span class="rate">4.7<small>карты</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.9<small>Я · 753</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip warn">бронь на выходные</span></div>
         <p class="why">Камерная альтернатива коктейльному маршруту: сеты российских вин на дегустацию, сыр выбираешь сам из витрины. Можно разговаривать без крика.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">дегустационный сет вин</span><span class="dish">сыр из витрины</span><span class="dish">фондю</span></div>
-        <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся — глянь карточку 2ГИС перед выходом.</p>
         </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
   <line x1="40" y1="300" x2="600" y2="300" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
   <path d="M70,300 L200,300 L200,232 Z" fill="var(--muted)" fill-opacity="0.28" stroke="var(--muted)" stroke-width="2.5"/>
@@ -1574,11 +1574,10 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">6</span>
           <div class="card-title"><span class="genre">Настойки · уличный движ</span><h3 class="venue">Petrov Vodkin</h3></div>
-          <div class="scores"><span class="rate">4.6<small>· 578</small></span><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">5.0<small>Я · 2.1к</small></span><span class="price">₽</span></div>
         </header>
         <p class="why">Противоположный «Детективу» полюс: тесно, живо, народ вываливается на улицу. Авторские настойки собственного производства, еда простая — бургеры и фри.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">настойки</span><span class="dish">бургер</span></div>
-        <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся.</p>
         </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
   <path d="M0,44 Q160,128 320,70 Q480,16 640,72" stroke="var(--line)" stroke-width="2" fill="none" opacity="0.55"/>
   <g stroke="var(--line)" stroke-width="2" opacity="0.55">
@@ -1624,7 +1623,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <span class="rstep"><span class="dot"></span><span class="t">20:00</span><span class="n">Детектив, где вы?</span><span class="seg"></span></span>
         <span class="rstep"><span class="dot"></span><span class="t">22:00</span><span class="n">Видеосалон закрыт</span><span class="seg"></span></span>
         <span class="rstep"><span class="dot"></span><span class="t">00:00</span><span class="n">Бирюльки</span><span class="seg"></span></span>
-        <span class="rstep"><span class="dot"></span><span class="t">01:30</span><span class="n">Mr. Drunke до 05:00</span></span>
+        <span class="rstep"><span class="dot"></span><span class="t">01:30</span><span class="n">финал: Кролл или Funky</span></span>
       </div>
     </div>
   </div>
@@ -1673,7 +1672,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
           <header class="card-head">
             <span class="rank">B</span>
             <div class="card-title"><span class="genre">Рэп · афтепати BPM Fest</span><h3 class="venue">VPISKA</h3></div>
-            <div class="scores"><span class="price">от 900 ₽</span></div>
+            <div class="scores"><span class="rate">4.9<small>Я · 33</small></span><span class="price">от 900 ₽</span></div>
           </header>
           <div class="chips"><span class="chip award">Thrill Pill</span><span class="chip plain">18+</span></div>
           <p class="why">Официальное продолжение рэп-фестиваля: самый плотный и самый молодой поток ночи. Тайм-клуб, открылся в июле.</p>
@@ -1766,11 +1765,11 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Гастропаб → клуб · барный квартал</span><h3 class="venue">Mr. Drunke</h3></div>
-          <div class="scores"><span class="rate">4.5<small>· ~1000</small></span><span class="price">₽</span></div>
+          <div class="scores"><span class="rate">4.9<small>Я · 2.0к</small></span><span class="price">₽</span></div>
         </header>
-        <div class="chips"><span class="chip ok">пт-сб до 05:00</span><span class="chip warn">фейсконтроль</span></div>
-        <p class="why">Старейший танцпол центра: в будни паб, в пт-сб полноценный ночной клуб. В двух шагах от всего барного квартала — естественный финал маршрута после 01:00.</p>
-        <p class="tip"><b>Знать:</b> в спортивном не пустят, охрана с характером. Бронь стола превращает фейсконтроль в формальность.</p>
+        <div class="chips"><span class="chip bad">закрывается навсегда · последний день 16.08</span></div>
+        <p class="why">16 лет главного данс-паба города закончились: 13 августа бар объявил о закрытии со словами «миссия на Земле выполнена». Финальные выходные — 15–16 августа, из зала распродают интерьер на память.</p>
+        <p class="tip"><b>Сегодня:</b> прощальная ночь легенды — либо исторический угар, либо аншлаг без шансов зайти. После 16.08 — вычёркивай из всех планов.</p>
         </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
   <circle cx="440" cy="204" r="118" fill="var(--accent)" fill-opacity="0.06"/>
   <line x1="170" y1="-8" x2="170" y2="56" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
@@ -1806,7 +1805,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Мейнстрим · большой танцпол до ~700 гостей</span><h3 class="venue">Funky</h3></div>
-          <div class="scores"><span class="rate">4.7–4.9<small>карты</small></span><span class="price">₽₽</span></div>
+          <div class="scores"><span class="rate">4.7<small>Я · 1.6к</small></span><span class="price">₽₽</span></div>
         </header>
         <div class="chips"><span class="chip warn">охрана — рулетка</span></div>
         <p class="why">Самый большой надёжный танцпол: несколько баров, веранда, коммерческий хаус и хиты. Когда жанр не принципиален, а народ нужен гарантированно — после 00:00.</p>
