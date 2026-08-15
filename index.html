@@ -193,18 +193,19 @@ h2 {
 .cards { display: flex; flex-direction: column; gap: 14px; }
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-  padding: 20px 24px 0; box-shadow: var(--shadow);
+  padding: 0; box-shadow: var(--shadow); overflow: clip;
   transition: border-color .15s ease;
 }
 .card:hover { border-color: var(--muted); box-shadow: 0 6px 36px -10px var(--accent-soft), var(--shadow); }
 .card.picked { border-color: var(--accent); background: linear-gradient(0deg, var(--accent-soft), var(--accent-soft)), var(--surface); }
 
-.card-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 4px 26px; align-items: start; }
+.card-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 0; align-items: stretch; }
+.card-body { padding: 20px 12px 4px 24px; min-width: 0; }
 .card-art {
-  aspect-ratio: 16 / 9; align-self: center;
-  border: 1px solid var(--line); border-radius: 12px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--surface2) 50%, transparent), transparent);
-  overflow: hidden;
+  align-self: stretch; min-height: 210px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface2) 40%, transparent), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 16%);
 }
 .card-art svg { width: 100%; height: 100%; display: block; }
 
@@ -222,8 +223,8 @@ h2 {
   color: var(--muted); font-weight: 700; margin-bottom: 3px;
 }
 h3.venue {
-  font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 19px;
-  margin: 0; letter-spacing: 0;
+  font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 23px;
+  margin: 0; letter-spacing: -.01em; line-height: 1.15;
 }
 .scores { display: flex; align-items: center; gap: 10px; flex: none; padding-top: 4px; }
 .rate {
@@ -234,51 +235,54 @@ h3.venue {
 .rate small { font-family: inherit; font-weight: 400; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
 .price { font-weight: 700; font-size: 13px; color: var(--muted); letter-spacing: .1em; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 0; margin-bottom: 12px; }
 .chip {
-  font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
-  padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+  font-size: 10.5px; font-weight: 800; letter-spacing: .09em;
+  text-transform: uppercase; white-space: nowrap;
 }
-.chip.award { background: var(--accent-soft); color: var(--accent); }
-.chip.ok    { background: var(--good-soft); color: var(--good); }
-.chip.warn  { background: var(--warn-soft); color: var(--warn); }
-.chip.plain { background: var(--surface2); color: var(--muted); }
+.chip:not(:last-child)::after { content: '·'; color: var(--line); margin: 0 12px; font-weight: 400; }
+.chip.award { color: var(--accent); }
+.chip.ok    { color: var(--good); }
+.chip.warn  { color: var(--warn); }
+.chip.plain { color: var(--muted); }
 
 .why { margin: 0 0 10px; max-width: 78ch; }
 
-.order-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 10px; }
+.order-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 12px; }
 .order-row .lbl {
   font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
-  font-weight: 800; color: var(--accent); margin-right: 2px;
+  font-weight: 800; color: var(--accent); margin-right: 4px;
 }
-.dish {
-  font-size: 12.5px; font-weight: 600; color: var(--ink);
-  border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px;
-  background: transparent; white-space: nowrap;
-}
+.dish { font-size: 14px; font-weight: 600; color: var(--ink); }
+.dish:not(:last-child)::after { content: '·'; color: var(--line); margin-left: 10px; font-weight: 400; }
 
-.tip { margin: 0 0 14px; font-size: 14px; color: var(--muted); max-width: 78ch; }
+.tip {
+  margin: 0 0 16px; font-size: 13.5px; color: var(--muted); max-width: 78ch;
+  border-left: 2px solid var(--warn); padding-left: 12px;
+}
 .tip b { color: var(--warn); font-weight: 650; }
+.tip.good { border-left-color: var(--good); }
 .tip.good b { color: var(--good); }
 
 .meta-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   border-top: 1px solid var(--line);
-  margin: 0 -24px; padding: 12px 24px 14px;
+  margin: 0; padding: 12px 24px 14px;
   flex-wrap: wrap;
+  background: color-mix(in srgb, var(--surface2) 30%, transparent);
 }
 .meta { display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .meta b { color: var(--ink); font-weight: 600; }
 .actions { display: flex; align-items: center; gap: 8px; flex: none; margin-left: auto; }
 a.link {
-  font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--muted);
-  border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; white-space: nowrap;
+  font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--accent);
+  padding: 6px 4px; white-space: nowrap;
 }
-a.link:hover { color: var(--accent); border-color: var(--accent); }
+a.link:hover { text-decoration: underline; text-underline-offset: 3px; }
 a.link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button.pick {
   font: inherit; font-size: 13px; font-weight: 700;
-  border: 1.5px solid var(--line); border-radius: 999px;
+  border: 1.5px solid var(--line); border-radius: 10px;
   background: transparent; color: var(--ink);
   padding: 7px 17px; cursor: pointer; white-space: nowrap;
   transition: background .12s ease, border-color .12s ease, color .12s ease;
@@ -394,9 +398,15 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
   .sec-head { gap: 10px; }
   .sec-num { font-size: 32px; }
   .sec-sub { font-size: 14.5px; margin-bottom: 20px; }
-  .card { padding: 16px 16px 0; border-radius: 14px; }
+  .card { padding: 0; border-radius: 14px; }
   .card-grid { grid-template-columns: 1fr; }
-  .card-art { order: -1; aspect-ratio: 2 / 1; margin-bottom: 12px; align-self: stretch; }
+  .card-body { padding: 14px 16px 2px; }
+  .card-art {
+    order: -1; aspect-ratio: 2 / 1; min-height: 0; margin: 0;
+    border-bottom: 1px solid var(--line);
+    -webkit-mask-image: none; mask-image: none;
+  }
+  h3.venue { font-size: 19px; }
   .card-head { gap: 10px; }
   .rank { font-size: 20px; min-width: 16px; }
   h3.venue { font-size: 17px; }
@@ -406,7 +416,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
   .why { font-size: 14.5px; }
   .tip { font-size: 13.5px; }
   .dish { font-size: 12px; }
-  .meta-row { margin: 0 -16px; padding: 10px 16px 12px; }
+  .meta-row { margin: 0; padding: 10px 16px 12px; }
   .meta { font-size: 12.5px; gap: 2px 14px; }
   .actions { width: 100%; justify-content: flex-end; }
   button.pick { padding: 9px 18px; }
