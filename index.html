@@ -1,6 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Краснодар после заката</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
 <style>
 @font-face {
   font-family: 'Unbounded';
@@ -25,7 +26,7 @@
   --muted: #6E655A;
   --line: #DCD6CB;
   --accent: #C2481C;
-  --accent-soft: #C2481C22;
+  --accent-soft: #C2481C1F;
   --on-accent: #FFF6EF;
   --good: #2E7D53;
   --good-soft: #2E7D5320;
@@ -33,7 +34,8 @@
   --warn-soft: #96660F1E;
   --bad: #B03A31;
   --bad-soft: #B03A311E;
-  --shadow: 0 1px 2px rgba(30,20,10,.06), 0 8px 28px rgba(30,20,10,.07);
+  --dusk: radial-gradient(90% 120% at 50% 118%, #E9A05F55 0%, #E9A05F22 45%, transparent 72%);
+  --shadow: 0 1px 2px rgba(30,20,10,.05), 0 8px 28px rgba(30,20,10,.06);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -44,7 +46,7 @@
     --muted: #A2988A;
     --line: #352E25;
     --accent: #FF6A33;
-    --accent-soft: #FF6A3326;
+    --accent-soft: #FF6A3324;
     --on-accent: #1C0E06;
     --good: #58B384;
     --good-soft: #58B38424;
@@ -52,6 +54,7 @@
     --warn-soft: #E0A84A22;
     --bad: #E06055;
     --bad-soft: #E0605522;
+    --dusk: radial-gradient(90% 120% at 50% 118%, #FF6A3336 0%, #C2481C18 45%, transparent 72%);
     --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.35);
   }
 }
@@ -63,7 +66,7 @@
   --muted: #A2988A;
   --line: #352E25;
   --accent: #FF6A33;
-  --accent-soft: #FF6A3326;
+  --accent-soft: #FF6A3324;
   --on-accent: #1C0E06;
   --good: #58B384;
   --good-soft: #58B38424;
@@ -71,6 +74,7 @@
   --warn-soft: #E0A84A22;
   --bad: #E06055;
   --bad-soft: #E0605522;
+  --dusk: radial-gradient(90% 120% at 50% 118%, #FF6A3336 0%, #C2481C18 45%, transparent 72%);
   --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.35);
 }
 
@@ -87,11 +91,15 @@ body {
   padding-bottom: 96px;
 }
 .wrap { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
-
-.display { font-family: 'Unbounded', -apple-system, sans-serif; }
+a { color: inherit; }
 
 /* ---------- masthead ---------- */
-header.masthead { padding: 64px 0 36px; }
+header.masthead {
+  padding: 68px 0 46px;
+  background: var(--dusk);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
 .eyebrow {
   font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase;
   color: var(--accent); font-weight: 700; margin-bottom: 18px;
@@ -119,7 +127,6 @@ nav.toc {
   position: sticky; top: 0; z-index: 30;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
-  margin-top: 26px;
 }
 nav.toc .wrap { display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; }
 nav.toc a {
@@ -128,11 +135,12 @@ nav.toc a {
   border: 1px solid transparent; white-space: nowrap;
 }
 nav.toc a:hover { color: var(--ink); border-color: var(--line); }
+nav.toc a.active { color: var(--accent); border-color: var(--accent); }
 nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- sections ---------- */
 section { padding: 54px 0 8px; }
-.sec-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 8px; }
+.sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
 .sec-num {
   font-family: 'Unbounded', sans-serif; font-weight: 200;
   font-size: 44px; color: var(--accent); line-height: 1;
@@ -142,24 +150,48 @@ h2 {
   font-family: 'Unbounded', sans-serif; font-weight: 700;
   font-size: clamp(22px, 3vw, 30px); margin: 0; letter-spacing: -.005em;
 }
+.sec-time {
+  font-family: 'Unbounded', sans-serif; font-weight: 500; font-size: 12px;
+  color: var(--muted); border: 1px dashed var(--line); border-radius: 999px;
+  padding: 4px 12px; letter-spacing: .04em; font-variant-numeric: tabular-nums;
+}
 .sec-sub { color: var(--muted); max-width: 68ch; margin: 6px 0 28px; font-size: 15.5px; }
 
 /* ---------- venue cards ---------- */
 .cards { display: flex; flex-direction: column; gap: 14px; }
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
-  padding: 22px 24px; box-shadow: var(--shadow);
-  display: grid; grid-template-columns: 1fr auto; gap: 6px 24px;
+  padding: 20px 24px 0; box-shadow: var(--shadow);
   transition: border-color .15s ease;
 }
 .card:hover { border-color: var(--muted); }
 .card.picked { border-color: var(--accent); background: linear-gradient(0deg, var(--accent-soft), var(--accent-soft)), var(--surface); }
-.card-main { min-width: 0; }
-.card-name-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; margin-bottom: 6px; }
+
+.card-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
+.rank {
+  font-family: 'Unbounded', sans-serif; font-weight: 200; font-size: 26px;
+  color: var(--muted); opacity: .55; line-height: 1.2; font-variant-numeric: tabular-nums;
+  min-width: 22px;
+}
+.card-title { flex: 1; min-width: 0; }
+.genre {
+  display: block; font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--muted); font-weight: 700; margin-bottom: 3px;
+}
 h3.venue {
   font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 19px;
   margin: 0; letter-spacing: 0;
 }
+.scores { display: flex; align-items: center; gap: 10px; flex: none; padding-top: 4px; }
+.rate {
+  font-family: 'Unbounded', sans-serif; font-weight: 500; font-size: 15px;
+  color: var(--good); font-variant-numeric: tabular-nums;
+  display: inline-flex; align-items: baseline; gap: 5px;
+}
+.rate small { font-family: inherit; font-weight: 400; font-size: 10px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.price { font-weight: 700; font-size: 13px; color: var(--muted); letter-spacing: .1em; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .chip {
   font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
   padding: 3px 10px; border-radius: 999px; white-space: nowrap;
@@ -167,35 +199,58 @@ h3.venue {
 .chip.award { background: var(--accent-soft); color: var(--accent); }
 .chip.ok    { background: var(--good-soft); color: var(--good); }
 .chip.warn  { background: var(--warn-soft); color: var(--warn); }
-.chip.bad   { background: var(--bad-soft); color: var(--bad); }
 .chip.plain { background: var(--surface2); color: var(--muted); }
 
-.facts {
-  display: flex; flex-wrap: wrap; gap: 4px 22px;
-  font-size: 13.5px; color: var(--muted); margin-bottom: 10px;
-  font-variant-numeric: tabular-nums;
+.why { margin: 0 0 10px; max-width: 78ch; }
+
+.order-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-bottom: 10px; }
+.order-row .lbl {
+  font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+  font-weight: 800; color: var(--accent); margin-right: 2px;
 }
-.facts b { color: var(--ink); font-weight: 600; }
-.why { margin: 0 0 8px; max-width: 78ch; }
-.tip { margin: 0; font-size: 14px; color: var(--muted); max-width: 78ch; }
+.dish {
+  font-size: 12.5px; font-weight: 600; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px;
+  background: transparent; white-space: nowrap;
+}
+
+.tip { margin: 0 0 14px; font-size: 14px; color: var(--muted); max-width: 78ch; }
 .tip b { color: var(--warn); font-weight: 650; }
 .tip.good b { color: var(--good); }
 
-.card-side { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 14px; }
-.rank {
-  font-family: 'Unbounded', sans-serif; font-weight: 200; font-size: 30px;
-  color: var(--muted); opacity: .55; line-height: 1; font-variant-numeric: tabular-nums;
+.meta-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border-top: 1px solid var(--line);
+  margin: 0 -24px; padding: 12px 24px 14px;
+  flex-wrap: wrap;
 }
+.meta { display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meta b { color: var(--ink); font-weight: 600; }
+.actions { display: flex; align-items: center; gap: 8px; flex: none; margin-left: auto; }
+a.link {
+  font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px; white-space: nowrap;
+}
+a.link:hover { color: var(--accent); border-color: var(--accent); }
+a.link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 button.pick {
-  font: inherit; font-size: 13.5px; font-weight: 700;
+  font: inherit; font-size: 13px; font-weight: 700;
   border: 1.5px solid var(--line); border-radius: 999px;
   background: transparent; color: var(--ink);
-  padding: 8px 18px; cursor: pointer; white-space: nowrap;
+  padding: 7px 17px; cursor: pointer; white-space: nowrap;
   transition: background .12s ease, border-color .12s ease, color .12s ease;
 }
 button.pick:hover { border-color: var(--accent); color: var(--accent); }
 button.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .picked button.pick { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* reveal */
+.card, .avoid-item, .prac { opacity: 1; transform: none; }
+.js-reveal .card, .js-reveal .avoid-item, .js-reveal .prac { opacity: 0; transform: translateY(10px); }
+.js-reveal .card.shown, .js-reveal .avoid-item.shown, .js-reveal .prac.shown {
+  opacity: 1; transform: none;
+  transition: opacity .45s ease, transform .45s ease;
+}
 
 /* ---------- route strip ---------- */
 .route {
@@ -253,6 +308,7 @@ button.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2p
 }
 .tonight .cards { margin-bottom: 12px; }
 .tonight .card { box-shadow: none; }
+.tonight .meta-row { border-top-color: var(--line); }
 
 /* ---------- plan bar ---------- */
 .planbar {
@@ -287,21 +343,27 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 @media (max-width: 760px) {
   body { padding-bottom: 84px; }
   .wrap { padding: 0 16px; }
-  header.masthead { padding: 36px 0 26px; }
+  header.masthead { padding: 38px 0 28px; }
   .lede { font-size: 15.5px; }
   .verify-note { font-size: 12px; padding: 6px 12px 6px 9px; }
   section { padding: 38px 0 6px; }
-  .sec-head { gap: 12px; }
+  .sec-head { gap: 10px; }
   .sec-num { font-size: 32px; }
   .sec-sub { font-size: 14.5px; margin-bottom: 20px; }
-  .card { grid-template-columns: 1fr; padding: 16px; gap: 4px; border-radius: 14px; }
-  .card-side { flex-direction: row; align-items: center; order: -1; justify-content: space-between; margin-bottom: 2px; }
-  .rank { font-size: 22px; }
+  .card { padding: 16px 16px 0; border-radius: 14px; }
+  .card-head { gap: 10px; }
+  .rank { font-size: 20px; min-width: 16px; }
   h3.venue { font-size: 17px; }
-  .facts { gap: 2px 16px; font-size: 13px; }
+  .genre { font-size: 10px; }
+  .scores { padding-top: 2px; }
+  .rate { font-size: 13.5px; }
   .why { font-size: 14.5px; }
   .tip { font-size: 13.5px; }
-  button.pick { padding: 10px 20px; }
+  .dish { font-size: 12px; }
+  .meta-row { margin: 0 -16px; padding: 10px 16px 12px; }
+  .meta { font-size: 12.5px; gap: 2px 14px; }
+  .actions { width: 100%; justify-content: flex-end; }
+  button.pick { padding: 9px 18px; }
   .route { padding: 14px 16px; }
   .tonight { padding: 4px 14px 8px; }
   .tonight-tag { font-size: 10.5px; padding: 4px 12px; }
@@ -317,6 +379,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
   html { scroll-behavior: auto; }
+  .js-reveal .card, .js-reveal .avoid-item, .js-reveal .prac { opacity: 1; transform: none; }
 }
 </style>
 
@@ -342,135 +405,151 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 <!-- ================= DINNER ================= -->
 <section id="dinner">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">01</span><h2>Ужин</h2></div>
-    <p class="sec-sub">Опора — экспертная премия WhereToEat (Юг-2025 и лонг-лист России-2026), сверенная с оценками 2ГИС и Яндекса. Первая тройка — гастрономический максимум города; дальше — разные жанры и чеки: мясо, итальянское бистро, пицца, локальная классика, казачья кухня у реки.</p>
+    <div class="sec-head"><span class="sec-num">01</span><h2>Ужин</h2><span class="sec-time">с 19:00</span></div>
+    <p class="sec-sub">Опора — экспертная премия WhereToEat (Юг-2025 и лонг-лист России-2026), сверенная с оценками 2ГИС и Яндекса. Первая тройка — гастрономический максимум города; дальше — разные жанры и чеки. Ценник: ₽ до 1.5 тыс, ₽₽ 1.5–3 тыс, ₽₽₽ от 3 тыс на человека.</p>
 
     <div class="cards">
       <article class="card" data-id="ryotei" data-sec="Ужин" data-name="Ryotei">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Ryotei</h3>
-            <span class="chip award">№4 юга России · WhereToEat</span>
-            <span class="chip award">топ-100 страны</span>
-            <span class="chip warn">депозит + бронь заранее</span>
-          </div>
-          <div class="facts"><span><b>Японская кухня</b></span><span>Японский сад парка Галицкого</span><span>чек <b>4–6 тыс ₽</b></span><span>до 23:00</span><span><b>+7 938 508-88-77</b></span></div>
-          <p class="why">Главный вау-ресторан города: суши и вагю с видом на крупнейший японский сад за пределами Японии. «Выбор СМИ» и сомелье года по версии Where­ToEat, 50+ позиций нихонсю по бокалам.</p>
-          <p class="tip good"><b>Лайфхак:</b> депозит при брони на ryotei.ru даёт QR-код — вход в Японский сад без общей очереди (активен за 30 мин до брони днём, за час — после 20:00). Приезжай заранее и гуляй по саду.</p>
-        </div>
-        <div class="card-side"><span class="rank">1</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">1</span>
+          <div class="card-title"><span class="genre">Японская кухня · Японский сад парка Галицкого</span><h3 class="venue">Ryotei</h3></div>
+          <div class="scores"><span class="price">₽₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">№4 юга России · WhereToEat</span><span class="chip award">топ-100 страны</span><span class="chip award">выбор СМИ</span><span class="chip warn">депозит + бронь сильно заранее</span></div>
+        <p class="why">Главный вау-ресторан города: суши и вагю с видом на крупнейший японский сад за пределами Японии. Сомелье года по версии премии, 50+ позиций нихонсю по бокалам.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">суши с чу-торо</span><span class="dish">вагю</span><span class="dish">гёдза ручной лепки</span><span class="dish">устрицы</span><span class="dish">моти</span></div>
+        <p class="tip good"><b>Лайфхак:</b> депозит при брони даёт QR-код — вход в Японский сад без общей очереди (активен за 30 мин до брони днём, за час — после 20:00). Приезжай заранее и гуляй по саду. Отмена депозита — минимум за 2 дня.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Разведчика Леонова, 7А</b></span><span>09:00–23:00</span><span>+7 938 508-88-77</span><span>чек 4–6 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://ryotei.ru" target="_blank" rel="noopener">бронь ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="pech" data-sec="Ужин" data-name="The Печь">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">The Печь</h3>
-            <span class="chip award">WhereToEat юг · №24</span>
-            <span class="chip ok">2ГИС 4.9 · Яндекс ~5.0</span>
-          </div>
-          <div class="facts"><span><b>Кубанская кухня из печи</b></span><span>Ленина, 38 · центр</span><span>чек <b>2.5–4 тыс ₽</b></span><span>до 23:00</span></div>
-          <p class="why">Флагман Андрея Матюхи — главного шефа города (Bocuse d'Or Russia). Самый надёжный выбор «за едой»: пирожки с уткой и карамельными яблоками, борщ из печи с ватрушкой, телячьи щёки, крем-брюле из кореновской сгущёнки.</p>
-          <p class="tip"><b>Важно:</b> сюда же переехало наследие закрывшегося «Угли-Угли» — та же команда и печная школа. Бронь на вечер обязательна.</p>
-        </div>
-        <div class="card-side"><span class="rank">2</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">2</span>
+          <div class="card-title"><span class="genre">Кубанская кухня из печи · исторический центр</span><h3 class="venue">The Печь</h3></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">WhereToEat юг · №24</span><span class="chip plain">шеф Андрей Матюха</span></div>
+        <p class="why">Флагман главного шефа города (Bocuse d'Or Russia). Самый надёжный выбор «за едой»: всё строится вокруг живой русской печи. Сюда же переехало наследие закрывшегося «Угли-Угли» — та же команда и печная школа.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">пирожки с уткой и яблоками · 770 ₽</span><span class="dish">борщ из печи с ватрушкой · 550 ₽</span><span class="dish">телячьи щёки · 1200 ₽</span><span class="dish">крем-брюле из кореновской сгущёнки</span></div>
+        <p class="tip"><b>Важно:</b> бронь на вечер обязательна — зал небольшой, а место культовое.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Ленина, 38</b></span><span>до 23:00</span><span>чек 2.5–4 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001017195387" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="kraken" data-sec="Ужин" data-name="The Great Kraken">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">The Great Kraken</h3>
-            <span class="chip ok">2ГИС 4.9</span>
-            <span class="chip award">лучшая пивная карта · WhereToEat</span>
-          </div>
-          <div class="facts"><span><b>Рыба и морепродукты</b></span><span>Красных Партизан, 134 · 4 этаж</span><span>чек <b>2–3.5 тыс ₽</b></span><span>панорама + веранда</span></div>
-          <p class="why">Устрицы, крабы и морские ежи из аквариума, икорный бар, raw-подача по итальянско-японским рецептам. Панорамные окна с закатами.</p>
-          <p class="tip"><b>Оговорка:</b> в отзывах встречается жалоба на устрицы в жару — сырой бар в августе на свой вкус, горячая кухня без вопросов.</p>
-        </div>
-        <div class="card-side"><span class="rank">3</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">3</span>
+          <div class="card-title"><span class="genre">Рыба и морепродукты · панорамный этаж</span><h3 class="venue">The Great Kraken</h3></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">лучшая пивная карта · WhereToEat</span><span class="chip plain">лонг-лист 2026</span></div>
+        <p class="why">Устрицы, крабы и морские ежи из аквариума, икорный бар, raw-подача по итальянско-японским рецептам. Панорамные окна на закат и веранда.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">устрицы</span><span class="dish">краб из аквариума</span><span class="dish">икорный бар</span><span class="dish">рыба на гриле</span></div>
+        <p class="tip"><b>Оговорка:</b> в отзывах встречается жалоба на устрицы в жару — сырой бар в августе на свой вкус, горячая кухня без вопросов.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Красных Партизан, 134 · 4 этаж</b></span><span>чек 2–3.5 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://kraken.restaurant" target="_blank" rel="noopener">сайт ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001039551288" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="skotina" data-sec="Ужин" data-name="Скотина">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Скотина</h3>
-            <span class="chip plain">2ГИС 4.6</span>
-            <span class="chip ok">пт-сб до 01:00</span>
-          </div>
-          <div class="facts"><span><b>Мясо · свой цех</b></span><span>Суворова, 64 · 2 этаж</span><span>чек <b>3–5 тыс ₽</b>, стейки дороже</span></div>
-          <p class="why">Концептуальный кубанский мясной: собственная разделка и выдержка местного мяса, угольные печи, субпродукты и редкие отрубы. Пирог Мясника с говяжьим ребром, салат с копчёным языком, домашний «Наполеон».</p>
-          <p class="tip"><b>Оговорка:</b> отзывы 2025-го смешанные — берите как мясной вечер с настойками и без завышенных ожиданий от премиальных стейков.</p>
-        </div>
-        <div class="card-side"><span class="rank">4</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">4</span>
+          <div class="card-title"><span class="genre">Мясо · собственный цех и выдержка</span><h3 class="venue">Скотина</h3></div>
+          <div class="scores"><span class="rate">4.6<small>2ГИС</small></span><span class="price">₽₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip ok">пт-сб до 01:00</span><span class="chip plain">кубанское мясо</span></div>
+        <p class="why">Концептуальный мясной: собственная разделка и выдержка местного мяса, угольные печи, субпродукты и редкие отрубы. Вариант, когда хочется засидеться позже 23:00.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">пирог Мясника с ребром · 1190 ₽</span><span class="dish">салат с копчёным языком</span><span class="dish">диафрагма</span><span class="dish">«Наполеон» · 550 ₽</span></div>
+        <p class="tip"><b>Оговорка:</b> отзывы 2025-го смешанные — иди за мясным вечером с настойками, без завышенных ожиданий от премиальных стейков (рибай ~4.5 тыс).</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Суворова, 64 · 2 этаж</b></span><span>вс-чт до 00:00, пт-сб до 01:00</span><span>чек 3–5 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://scotina.ru" target="_blank" rel="noopener">сайт ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001006306287" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="ave" data-sec="Ужин" data-name="Ave Bistro">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Ave Bistro</h3>
-            <span class="chip award">WhereToEat юг · №15</span>
-            <span class="chip ok">2ГИС 4.7</span>
-          </div>
-          <div class="facts"><span><b>Итальянское бистро</b></span><span>Чапаева, 82/1</span><span>чек <b>~2.5 тыс ₽</b></span></div>
-          <p class="why">Классика Италии в авторской подаче шефа Андрея Солодина: паста, тартары, лазанья и тирамису, которые в отзывах называют лучшими в городе. Стильно и без пафоса.</p>
-          <p class="tip good"><b>Логистика:</b> стоит в кластере Горького/Чапаева — легко связать с Rail и Petrov Vodkin на продолжение.</p>
-        </div>
-        <div class="card-side"><span class="rank">5</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">5</span>
+          <div class="card-title"><span class="genre">Итальянское бистро · кластер Горького/Чапаева</span><h3 class="venue">Ave Bistro</h3></div>
+          <div class="scores"><span class="rate">4.7<small>2ГИС</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">WhereToEat юг · №15</span><span class="chip plain">шеф Андрей Солодин</span></div>
+        <p class="why">Классика Италии в авторской подаче: паста и тартары, которые в отзывах называют лучшими в городе. Стильно и без пафоса.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">паста</span><span class="dish">тартар</span><span class="dish">лазанья</span><span class="dish">тирамису</span></div>
+        <p class="tip good"><b>Логистика:</b> рядом Rail и Petrov Vodkin — продолжение вечера в двух шагах.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Чапаева, 82/1</b></span><span>чек ~2.5 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001081533539" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="toscana" data-sec="Ужин" data-name="Кубана Тоскана">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Кубана Тоскана</h3>
-            <span class="chip ok">2ГИС 5.0 / 441</span>
-            <span class="chip plain">лонг-лист WhereToEat</span>
-          </div>
-          <div class="facts"><span><b>Неаполитанская пицца</b></span><span>Пашковская, 84</span><span>чек <b>1–1.5 тыс ₽</b></span><span>пт-сб до 23:00</span></div>
-          <p class="why">Печь прямо в зале, неаполитанские традиции на кубанский лад. Самый доступный чек в этом списке при рейтинге, которому позавидует любой файн-дайнинг.</p>
-          <p class="tip"><b>Формат:</b> дружеский вечер за пиццей и вином без церемоний и дресс-кода.</p>
-        </div>
-        <div class="card-side"><span class="rank">6</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">6</span>
+          <div class="card-title"><span class="genre">Неаполитанская пицца · печь в зале</span><h3 class="venue">Кубана Тоскана</h3></div>
+          <div class="scores"><span class="rate">5.0<small>2ГИС · 441</small></span><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span></div>
+        <p class="why">Неаполитанские традиции на кубанский лад: печь прямо в зале, тесто на глазах. Самый доступный чек в этом списке при рейтинге, которому позавидует любой файн-дайнинг.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">пицца из печи</span><span class="dish">вино бокалами</span></div>
+        <p class="tip"><b>Формат:</b> дружеский вечер без церемоний и дресс-кода.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Пашковская, 84</b></span><span>вс-чт до 22:00, пт-сб до 23:00</span><span>чек 1–1.5 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001054595057" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="madyar" data-sec="Ужин" data-name="Мадьяр">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Мадьяр</h3>
-            <span class="chip plain">лонг-лист WhereToEat</span>
-            <span class="chip plain">с 2001 года</span>
-          </div>
-          <div class="facts"><span><b>Европейская и венгерская кухня</b></span><span>сеть · флагман на Красных Партизан</span><span>чек <b>1–3 тыс ₽</b></span></div>
-          <p class="why">Первая гастро-легенда города: с этого ресторана началась крупнейшая ресторанная группа Краснодара. Гуляш и семейная классика, проверенная двадцатью пятью годами.</p>
-          <p class="tip"><b>Зачем:</b> понять, как ест сам Краснодар, когда премии и дегустационные сеты надоели.</p>
-        </div>
-        <div class="card-side"><span class="rank">7</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">7</span>
+          <div class="card-title"><span class="genre">Европейская и венгерская кухня · сеть</span><h3 class="venue">Мадьяр</h3></div>
+          <div class="scores"><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span><span class="chip plain">с 2001 года</span></div>
+        <p class="why">Первая гастро-легенда города: с этого ресторана началась крупнейшая ресторанная группа Краснодара. Семейная классика, проверенная двадцатью пятью годами — способ понять, как ест сам Краснодар.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">гуляш</span><span class="dish">венгерская классика</span></div>
+        <p class="tip"><b>Знать:</b> точек несколько — выбирай ближайшую по карте.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>сеть · есть зал на 40-летия Победы, 33Г</b></span><span>чек 1–3 тыс ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001083961733" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="stan" data-sec="Ужин" data-name="Станъ">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Станъ</h3>
-            <span class="chip plain">лонг-лист WhereToEat</span>
-            <span class="chip ok">у реки</span>
-          </div>
-          <div class="facts"><span><b>Кубанская и казачья кухня</b></span><span>Кубанская набережная</span><span>чек <b>~1.5 тыс ₽</b></span></div>
-          <p class="why">Казачий колорит на берегу Кубани: летние беседки у воды, картины кубанских художников, борщ и вареники в полном антураже. Работает на впечатление — сюда водят гостей города.</p>
-          <p class="tip"><b>Летом:</b> проси беседку у воды при брони.</p>
-        </div>
-        <div class="card-side"><span class="rank">8</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">8</span>
+          <div class="card-title"><span class="genre">Кубанская и казачья кухня · берег реки</span><h3 class="venue">Станъ</h3></div>
+          <div class="scores"><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip plain">лонг-лист WhereToEat</span><span class="chip ok">беседки у воды</span></div>
+        <p class="why">Казачий колорит на берегу Кубани: летние беседки, картины кубанских художников, борщ и вареники в полном антураже. Работает на впечатление — сюда водят гостей города.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">борщ</span><span class="dish">вареники</span></div>
+        <p class="tip good"><b>Летом:</b> проси беседку у воды при брони.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Кубанская набережная</b></span><span>чек ~1.5 тыс ₽</span></div>
+          <div class="actions"><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="cafekrd" data-sec="Ужин" data-name="Cafe Krasnodar">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Cafe Krasnodar</h3>
-            <span class="chip award">лонг-лист WhereToEat 2026</span>
-            <span class="chip ok">трансфер по парку</span>
-          </div>
-          <div class="facts"><span><b>Авторская кухня</b></span><span>парк Галицкого · Разведчика Леонова, 4</span><span>09:00–00:00</span><span><b>+7 918 230-07-02</b></span></div>
-          <p class="why">Вариант «поужинать в парке» без гастрономических амбиций Ryotei: спокойно, красиво, рядом стадион и прогулка.</p>
-          <p class="tip good"><b>Лайфхак:</b> с 17:00 до полуночи работает бесплатный трансфер — предупреди при брони и позвони за 5–10 минут до приезда, машина заберёт от входа в парк и довезёт до дверей.</p>
-        </div>
-        <div class="card-side"><span class="rank">9</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">9</span>
+          <div class="card-title"><span class="genre">Авторская кухня · парк Галицкого</span><h3 class="venue">Cafe Krasnodar</h3></div>
+          <div class="scores"><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">лонг-лист WhereToEat 2026</span><span class="chip ok">трансфер по парку</span></div>
+        <p class="why">Вариант «поужинать в парке» без гастрономических амбиций Ryotei: спокойно, красиво, рядом стадион и вечерняя прогулка.</p>
+        <p class="tip good"><b>Лайфхак:</b> с 17:00 до полуночи работает бесплатный трансфер — предупреди при брони и позвони за 5–10 минут до приезда, машина заберёт от входа в парк и довезёт до дверей.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Разведчика Леонова, 4</b></span><span>09:00–00:00</span><span>+7 918 230-07-02</span></div>
+          <div class="actions"><a class="link" href="https://cafekrasnodar.ru" target="_blank" rel="noopener">сайт ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
     </div>
   </div>
@@ -479,91 +558,102 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 <!-- ================= BARS ================= -->
 <section id="bars">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">02</span><h2>Бары</h2></div>
+    <div class="sec-head"><span class="sec-num">02</span><h2>Бары</h2><span class="sec-time">с 20:00</span></div>
     <p class="sec-sub">Топ подтверждён национальной премией Where2Drink-2026. Почти всё стоит в одном квартале Красноармейской / Карасунской — вечер собирается пешком, без такси.</p>
 
     <div class="cards">
       <article class="card" data-id="detektiv" data-sec="Бары" data-name="Детектив, где вы?">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Детектив, где вы?</h3>
-            <span class="chip award">шорт-лист Where2Drink 2026</span>
-            <span class="chip award">топ-10 России 2025</span>
-            <span class="chip warn">бронь обязательна</span>
-          </div>
-          <div class="facts"><span><b>Спикизи · коктейли</b></span><span>Красноармейская, 45 · арка, розовая дверь, 2 этаж</span><span>2ГИС <b>4.8</b> / 405</span><span>с 17:00 до 02:00</span></div>
-          <p class="why">Единственный бар города в топ-54 страны. Джаз, приглушённый свет, коктейли-ребусы, izakaya room с азиатскими миксами, винная карта «Север / Юг».</p>
-          <p class="tip"><b>Знать:</b> всего ~30 посадок — в пятницу-субботу без брони почти нереально. Коктейли по умолчанию крепкие: хочешь мягче — скажи бармену сразу.</p>
-        </div>
-        <div class="card-side"><span class="rank">1</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">1</span>
+          <div class="card-title"><span class="genre">Спикизи · авторские коктейли</span><h3 class="venue">Детектив, где вы?</h3></div>
+          <div class="scores"><span class="rate">4.8<small>2ГИС · 405</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip award">шорт-лист Where2Drink 2026</span><span class="chip award">топ-10 России 2025</span><span class="chip warn">бронь обязательна</span></div>
+        <p class="why">Единственный бар города в топ-54 страны. Джаз, приглушённый свет, коктейли-ребусы, izakaya room с азиатскими миксами, винная карта «Север / Юг».</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">авторский сет</span><span class="dish">izakaya-миксы</span><span class="dish">место за стойкой</span></div>
+        <p class="tip"><b>Знать:</b> ~30 посадок — в пятницу-субботу без брони почти нереально. Коктейли по умолчанию крепкие: хочешь мягче — скажи бармену сразу.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Красноармейская, 45 · арка, розовая дверь, 2 этаж</b></span><span>17:00–02:00</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001035829041" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="birulki" data-sec="Бары" data-name="Бирюльки">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Бирюльки</h3>
-            <span class="chip ok">2ГИС 4.9 · Яндекс 5.0</span>
-            <span class="chip plain">лонг-лист Where2Drink</span>
-          </div>
-          <div class="facts"><span><b>Хоровод-бар · настойки</b></span><span>Карасунская, 81</span><span>~25 мест</span><span>пт-сб до 03:00, будни до 01:00</span></div>
-          <p class="why">Тёмная сторона славянских сказок: «Кровожадная Мэри», «Игла Кощея», всё на русском продукте — локальные травы, ягоды, настойки. Подача — отдельное шоу; по выходным диджей и танцы.</p>
-          <p class="tip"><b>Проверить:</b> настойка «гречка с молоком» — подозрительно частый герой восторженных отзывов. Две минуты пешком от «Детектива».</p>
-        </div>
-        <div class="card-side"><span class="rank">2</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">2</span>
+          <div class="card-title"><span class="genre">Хоровод-бар · настойки и славянская тьма</span><h3 class="venue">Бирюльки</h3></div>
+          <div class="scores"><span class="rate">4.9<small>2ГИС</small></span><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip plain">лонг-лист Where2Drink</span><span class="chip ok">пт-сб танцы до 03:00</span></div>
+        <p class="why">Тёмная сторона славянских сказок: коктейли только на русском продукте — локальные травы, ягоды, настойки. Подача — отдельное шоу. Две минуты пешком от «Детектива».</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">настойка «гречка с молоком»</span><span class="dish">«Игла Кощея»</span><span class="dish">сет настоек</span></div>
+        <p class="tip"><b>Знать:</b> всего ~25 мест — в выходные лучше бронировать заранее.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Карасунская, 81</b></span><span>будни до 01:00, пт-сб до 03:00</span><span>коктейли 500–700 ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001093354871" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="videosalon" data-sec="Бары" data-name="Видеосалон закрыт">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Видеосалон закрыт</h3>
-            <span class="chip ok">4.8 / ~1900 оценок</span>
-            <span class="chip plain">танцпол</span>
-          </div>
-          <div class="facts"><span><b>Коктейли · 80-90-е</b></span><span>Красноармейская, 64</span><span>коктейли 600–700 ₽</span><span>пт-сб до 03:00</span></div>
-          <p class="why">Главный танцующий бар центра в эстетике видеосалонов: «Чужой», «Добби свободен», «Футурама». Шумно, весело, много людей — идеальная вторая точка после медленного «Детектива».</p>
-          <p class="tip"><b>Тайминг:</b> заходить к 22:00–23:00, когда раскачивается.</p>
-        </div>
-        <div class="card-side"><span class="rank">3</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">3</span>
+          <div class="card-title"><span class="genre">Коктейли и танцпол · эстетика 80–90-х</span><h3 class="venue">Видеосалон закрыт</h3></div>
+          <div class="scores"><span class="rate">4.8<small>~1900 оценок</small></span><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip ok">главный танцующий бар центра</span></div>
+        <p class="why">Мир видеосалонов и поп-культуры: шумно, весело, много людей. Идеальная вторая точка после медленного «Детектива» — заходить к 22:00–23:00, когда раскачивается.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">«Чужой»</span><span class="dish">«Добби свободен»</span><span class="dish">«Футурама»</span></div>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Красноармейская, 64</b></span><span>вс-чт до 01:00, пт-сб до 03:00</span><span>коктейли 600–700 ₽</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001032620626" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="rail" data-sec="Бары" data-name="Rail bottle shop">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Rail bottle shop</h3>
-            <span class="chip plain">лонг-лист Where2Drink</span>
-          </div>
-          <div class="facts"><span><b>Крафт · сидры · миды</b></span><span>Горького, 117 · старый центр</span><span>чек ~600 ₽</span><span>30 мест + веранда</span></div>
-          <p class="why">Лучший пивной формат города: краны местной пивоварни, холодильник с редкими бутылками, новинки раньше всех. Трамваи под окнами задают атмосферу.</p>
-          <p class="tip"><b>Знать:</b> к уличным столикам подходят колоритные прохожие — если напрягает, садись внутрь.</p>
-        </div>
-        <div class="card-side"><span class="rank">4</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">4</span>
+          <div class="card-title"><span class="genre">Крафт, сидры, миды · старый центр</span><h3 class="venue">Rail bottle shop</h3></div>
+          <div class="scores"><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip plain">лонг-лист Where2Drink</span></div>
+        <p class="why">Лучший пивной формат города: краны местной пивоварни, холодильник с редкими бутылками, новинки раньше всех. Трамваи под окнами задают атмосферу.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">крафт-ротация с кранов</span><span class="dish">сидры</span><span class="dish">миды</span></div>
+        <p class="tip"><b>Знать:</b> к уличным столикам подходят колоритные прохожие — если напрягает, садись внутрь.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Горького, 117</b></span><span>чек ~600 ₽</span><span>30 мест + веранда</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001045297182" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="vinchik" data-sec="Бары" data-name="Хлеб да Винчик">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Хлеб да Винчик</h3>
-            <span class="chip plain">~4.7</span>
-            <span class="chip warn">бронь на выходные</span>
-          </div>
-          <div class="facts"><span><b>Вино и сыр · тихо</b></span><span>Мира, 40 · напротив Hilton</span></div>
-          <p class="why">Камерная альтернатива коктейльному маршруту: сеты российских вин на дегустацию, сыр выбираешь сам из витрины, фондю. Можно разговаривать без крика.</p>
-          <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся — глянь карточку 2ГИС перед выходом.</p>
-        </div>
-        <div class="card-side"><span class="rank">5</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">5</span>
+          <div class="card-title"><span class="genre">Вино и сыр · тихий формат</span><h3 class="venue">Хлеб да Винчик</h3></div>
+          <div class="scores"><span class="rate">4.7<small>карты</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip warn">бронь на выходные</span></div>
+        <p class="why">Камерная альтернатива коктейльному маршруту: сеты российских вин на дегустацию, сыр выбираешь сам из витрины. Можно разговаривать без крика.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">дегустационный сет вин</span><span class="dish">сыр из витрины</span><span class="dish">фондю</span></div>
+        <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся — глянь карточку 2ГИС перед выходом.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Мира, 40 · напротив Hilton</b></span></div>
+          <div class="actions"><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="vodkin" data-sec="Бары" data-name="Petrov Vodkin">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Petrov Vodkin</h3>
-            <span class="chip plain">4.6 / 578</span>
-          </div>
-          <div class="facts"><span><b>Настойки · уличный движ</b></span><span>Чапаева, 85</span><span>ежедневно до 02:00</span></div>
-          <p class="why">Противоположный «Детективу» полюс: тесно, живо, народ вываливается на улицу. Авторские настойки собственного производства, еда простая — бургеры и фри.</p>
-          <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся.</p>
-        </div>
-        <div class="card-side"><span class="rank">6</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">6</span>
+          <div class="card-title"><span class="genre">Настойки · уличный движ</span><h3 class="venue">Petrov Vodkin</h3></div>
+          <div class="scores"><span class="rate">4.6<small>· 578</small></span><span class="price">₽</span></div>
+        </header>
+        <p class="why">Противоположный «Детективу» полюс: тесно, живо, народ вываливается на улицу. Авторские настойки собственного производства, еда простая — бургеры и фри.</p>
+        <div class="order-row"><span class="lbl">Брать</span><span class="dish">настойки</span><span class="dish">бургер</span></div>
+        <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Чапаева, 85</b></span><span>ежедневно до 02:00</span></div>
+          <div class="actions"><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
     </div>
 
@@ -582,83 +672,88 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 <!-- ================= NIGHT ================= -->
 <section id="night">
   <div class="wrap">
-    <div class="sec-head"><span class="sec-num">03</span><h2>Ночь</h2></div>
-    <p class="sec-sub">Честный расклад: стационарной клубной сцены федерального уровня в городе нет — легенды (ХОХО, Digger, Теплица) закрылись. Город танцует в бар-клубах, андеграунд живёт разовыми ивентами: следи за афишами qtickets и rupor.events, канал опен-эйров — @secretplace_23.</p>
+    <div class="sec-head"><span class="sec-num">03</span><h2>Ночь</h2><span class="sec-time">после 23:00</span></div>
+    <p class="sec-sub">Честный расклад: стационарной клубной сцены федерального уровня в городе нет — легенды (ХОХО, Digger, Теплица) закрылись. Город танцует в бар-клубах, андеграунд живёт разовыми ивентами: следи за афишами qtickets и rupor.events.</p>
 
     <div class="tonight">
       <span class="tonight-tag">Только сегодня · сб 15.08</span>
       <div class="cards">
         <article class="card" data-id="kroll" data-sec="Ночь" data-name="Чёрный Кролл · Birthday Trip MORELLY">
-          <div class="card-main">
-            <div class="card-name-row">
-              <h3 class="venue">Чёрный Кролл</h3>
-              <span class="chip award">ANTURAGE + MORELLY</span>
-              <span class="chip plain">21+</span>
-            </div>
-            <div class="facts"><span><b>Deep / melodic house</b></span><span>Зиповская, 5 лит. Б</span><span>с 22:00 до ~05:00</span><span>от <b>1000 ₽</b></span><span>столы: <b>+7 918 111-71-70</b></span></div>
-            <p class="why">Birthday Trip резидента MORELLY: гость ANTURAGE и ещё десяток диджеев. Новый красивый клуб с большим танцполом — самый взрослый электронный вариант на сегодня.</p>
-            <p class="tip"><b>Знать:</b> клуб открылся недавно, оценок единицы — музыка обещает больше, чем предсказуем сервис. Приезжать к 23:30.</p>
-          </div>
-          <div class="card-side"><span class="rank">A</span><button class="pick" type="button">В план</button></div>
+          <header class="card-head">
+            <span class="rank">A</span>
+            <div class="card-title"><span class="genre">Deep / melodic house · новый клуб</span><h3 class="venue">Чёрный Кролл</h3></div>
+            <div class="scores"><span class="price">от 1000 ₽</span></div>
+          </header>
+          <div class="chips"><span class="chip award">ANTURAGE + MORELLY</span><span class="chip plain">21+</span></div>
+          <p class="why">Birthday Trip резидента MORELLY: гость ANTURAGE и ещё десяток диджеев. Большой танцпол, чёрный бархат и зеркала — самый взрослый электронный вариант на сегодня.</p>
+          <p class="tip"><b>Знать:</b> клуб открылся недавно, оценок единицы — музыка обещает больше, чем предсказуем сервис. Приезжать к 23:30.</p>
+          <footer class="meta-row">
+            <div class="meta"><span><b>Зиповская, 5 лит. Б</b></span><span>с 22:00 до ~05:00</span><span>столы: +7 918 111-71-70</span></div>
+            <div class="actions"><a class="link" href="https://krasnodar.qtickets.events/249205-birthday-trip-morelly" target="_blank" rel="noopener">билеты ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001114968792" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+          </footer>
         </article>
 
         <article class="card" data-id="vpiska" data-sec="Ночь" data-name="VPISKA · BPM Fest afterparty">
-          <div class="card-main">
-            <div class="card-name-row">
-              <h3 class="venue">VPISKA</h3>
-              <span class="chip award">Thrill Pill</span>
-              <span class="chip plain">18+</span>
-            </div>
-            <div class="facts"><span><b>Рэп · афтепати BPM Fest</b></span><span>Карасунская, 78</span><span>с 22:00</span><span>от <b>900 ₽</b></span></div>
-            <p class="why">Официальное продолжение рэп-фестиваля: самый плотный и самый молодой поток ночи. Тайм-клуб, открылся в июле.</p>
-            <p class="tip"><b>Тайминг:</b> к полуночи, когда подтянется фестивальная толпа. Если BPM-сцена ничего не говорит — выбирай Кролл.</p>
-          </div>
-          <div class="card-side"><span class="rank">B</span><button class="pick" type="button">В план</button></div>
+          <header class="card-head">
+            <span class="rank">B</span>
+            <div class="card-title"><span class="genre">Рэп · афтепати BPM Fest</span><h3 class="venue">VPISKA</h3></div>
+            <div class="scores"><span class="price">от 900 ₽</span></div>
+          </header>
+          <div class="chips"><span class="chip award">Thrill Pill</span><span class="chip plain">18+</span></div>
+          <p class="why">Официальное продолжение рэп-фестиваля: самый плотный и самый молодой поток ночи. Тайм-клуб, открылся в июле.</p>
+          <p class="tip"><b>Тайминг:</b> к полуночи, когда подтянется фестивальная толпа. Если BPM-сцена ничего не говорит — выбирай Кролл.</p>
+          <footer class="meta-row">
+            <div class="meta"><span><b>Карасунская, 78</b></span><span>с 22:00</span></div>
+            <div class="actions"><a class="link" href="https://krasnodar.qtickets.events/252062-bpm-fest-afterparty-thrill-pill" target="_blank" rel="noopener">билеты ↗</a><button class="pick" type="button">В план</button></div>
+          </footer>
         </article>
 
         <article class="card" data-id="secret" data-sec="Ночь" data-name="Secret Place · опен-эйр">
-          <div class="card-main">
-            <div class="card-name-row">
-              <h3 class="venue">Secret Place</h3>
-              <span class="chip ok">вход свободный</span>
-              <span class="chip plain">до 06:00</span>
-            </div>
-            <div class="facts"><span><b>House → techno после 01:00</b></span><span>поляна у озера · координаты в тг @secretplace_23</span><span>донат по желанию</span></div>
-            <p class="why">Единственный настоящий рейв на сегодня: опен-эйр на природе, 6 кВт звука, десяток диджеев, купание в озере, палатки и барбекю-зоны.</p>
-            <p class="tip"><b>Знать:</b> это поляна — еду, напитки и плед везёшь с собой. После Ryotei в красивой одежде туда не надо.</p>
-          </div>
-          <div class="card-side"><span class="rank">C</span><button class="pick" type="button">В план</button></div>
+          <header class="card-head">
+            <span class="rank">C</span>
+            <div class="card-title"><span class="genre">House → techno после 01:00 · опен-эйр</span><h3 class="venue">Secret Place</h3></div>
+            <div class="scores"><span class="price">донат</span></div>
+          </header>
+          <div class="chips"><span class="chip ok">вход свободный</span><span class="chip plain">до 06:00</span></div>
+          <p class="why">Единственный настоящий рейв на сегодня: поляна у озера, 6 кВт звука, десяток диджеев, купание, палатки и барбекю-зоны.</p>
+          <p class="tip"><b>Знать:</b> еду, напитки и плед везёшь с собой. После Ryotei в красивой одежде туда не надо. Координаты — в телеграме организаторов.</p>
+          <footer class="meta-row">
+            <div class="meta"><span><b>поляна у озера</b></span><span>идёт до 06:00 утра</span></div>
+            <div class="actions"><a class="link" href="https://t.me/secretplace_23" target="_blank" rel="noopener">координаты ↗</a><button class="pick" type="button">В план</button></div>
+          </footer>
         </article>
       </div>
     </div>
 
     <div class="cards">
       <article class="card" data-id="drunke" data-sec="Ночь" data-name="Mr. Drunke">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Mr. Drunke</h3>
-            <span class="chip ok">до 05:00 пт-сб</span>
-            <span class="chip warn">фейсконтроль</span>
-          </div>
-          <div class="facts"><span><b>Гастропаб → клуб</b></span><span>Красноармейская, 58</span><span>4.5 / ~1000</span></div>
-          <p class="why">Старейший танцпол центра: в будни паб, в пт-сб полноценный ночной клуб. Стоит в двух шагах от всего барного квартала — естественный финал маршрута после 01:00.</p>
-          <p class="tip"><b>Знать:</b> в спортивном не пустят, охрана с характером. Бронь стола превращает фейсконтроль в формальность.</p>
-        </div>
-        <div class="card-side"><span class="rank">1</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">1</span>
+          <div class="card-title"><span class="genre">Гастропаб → клуб · барный квартал</span><h3 class="venue">Mr. Drunke</h3></div>
+          <div class="scores"><span class="rate">4.5<small>· ~1000</small></span><span class="price">₽</span></div>
+        </header>
+        <div class="chips"><span class="chip ok">пт-сб до 05:00</span><span class="chip warn">фейсконтроль</span></div>
+        <p class="why">Старейший танцпол центра: в будни паб, в пт-сб полноценный ночной клуб. В двух шагах от всего барного квартала — естественный финал маршрута после 01:00.</p>
+        <p class="tip"><b>Знать:</b> в спортивном не пустят, охрана с характером. Бронь стола превращает фейсконтроль в формальность.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Красноармейская, 58</b></span><span>пт-сб до 05:00</span></div>
+          <div class="actions"><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
 
       <article class="card" data-id="funky" data-sec="Ночь" data-name="Funky">
-        <div class="card-main">
-          <div class="card-name-row">
-            <h3 class="venue">Funky</h3>
-            <span class="chip plain">клуб 4.7–4.9</span>
-            <span class="chip warn">охрана — рулетка</span>
-          </div>
-          <div class="facts"><span><b>Мейнстрим · большой танцпол</b></span><span>Красная, 67</span><span>до ~06:00 в сб</span><span>после 00:00</span></div>
-          <p class="why">Самый большой надёжный танцпол: несколько баров, веранда, вместимость до ~700. Коммерческий хаус и хиты — когда жанр не принципиален, а народ нужен гарантированно.</p>
-          <p class="tip"><b>Знать:</b> в отзывах систематические жалобы на охрану (пускают за деньги, заворачивают по «дресс-коду»). Лечится бронью стола заранее.</p>
-        </div>
-        <div class="card-side"><span class="rank">2</span><button class="pick" type="button">В план</button></div>
+        <header class="card-head">
+          <span class="rank">2</span>
+          <div class="card-title"><span class="genre">Мейнстрим · большой танцпол до ~700 гостей</span><h3 class="venue">Funky</h3></div>
+          <div class="scores"><span class="rate">4.7–4.9<small>карты</small></span><span class="price">₽₽</span></div>
+        </header>
+        <div class="chips"><span class="chip warn">охрана — рулетка</span></div>
+        <p class="why">Самый большой надёжный танцпол: несколько баров, веранда, коммерческий хаус и хиты. Когда жанр не принципиален, а народ нужен гарантированно — после 00:00.</p>
+        <p class="tip"><b>Знать:</b> в отзывах систематические жалобы на охрану (пускают за деньги, заворачивают по «дресс-коду»). Лечится бронью стола заранее.</p>
+        <footer class="meta-row">
+          <div class="meta"><span><b>Красная, 67</b></span><span>сб до ~06:00</span></div>
+          <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001062411946" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
+        </footer>
       </article>
     </div>
   </div>
@@ -702,7 +797,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       <div class="prac">
         <h4>Пешая логистика</h4>
         <p>Барный квартал: Детектив (Красноармейская, 45) → Видеосалон (64) → Drunke (58) → Бирюльки (Карасунская, 81) — всё в пяти минутах друг от друга.</p>
-        <p class="mut">Второй кластер — Горького/Чапаева (Rail, Petrov Vodkin), между кластерами ~600 метров.</p>
+        <p class="mut">Второй кластер — Горького/Чапаева (Ave Bistro, Rail, Petrov Vodkin), между кластерами ~600 метров.</p>
       </div>
     </div>
   </div>
@@ -785,9 +880,6 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       copyBtn.textContent = 'Скопировано ✓';
       setTimeout(function () { copyBtn.textContent = 'Скопировать план'; }, 1600);
     }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, function () { fallback(); });
-    } else { fallback(); }
     function fallback() {
       var ta = document.createElement('textarea');
       ta.value = text;
@@ -797,6 +889,9 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       try { document.execCommand('copy'); done(); } catch (e) {}
       document.body.removeChild(ta);
     }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+    } else { fallback(); }
   });
 
   clearBtn.addEventListener('click', function () {
@@ -806,5 +901,34 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
   });
 
   render();
+
+  /* scrollspy */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var secs = navLinks.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window && secs.length) {
+    var current = null;
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) current = en.target.id;
+      });
+      navLinks.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }, { rootMargin: '-25% 0px -65% 0px' });
+    secs.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* reveal on scroll */
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-reveal');
+    var items = Array.prototype.slice.call(document.querySelectorAll('.card, .avoid-item, .prac'));
+    var ro = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('shown'); ro.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    items.forEach(function (el) { ro.observe(el); });
+  }
 })();
 </script>
