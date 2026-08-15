@@ -265,7 +265,7 @@ button.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2p
   max-width: 1060px; margin: 0 auto; padding: 12px 28px;
   display: flex; align-items: center; gap: 18px;
 }
-.plan-count { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; }
+.plan-count { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 15px; white-space: nowrap; flex: none; }
 .plan-count .n { color: var(--accent); font-variant-numeric: tabular-nums; }
 .plan-preview { flex: 1; min-width: 0; color: var(--muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .planbar button {
@@ -285,12 +285,34 @@ footer.colophon {
 footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
 
 @media (max-width: 760px) {
-  .wrap { padding: 0 18px; }
-  .card { grid-template-columns: 1fr; }
-  .card-side { flex-direction: row; align-items: center; order: -1; justify-content: space-between; }
+  body { padding-bottom: 84px; }
+  .wrap { padding: 0 16px; }
+  header.masthead { padding: 36px 0 26px; }
+  .lede { font-size: 15.5px; }
+  .verify-note { font-size: 12px; padding: 6px 12px 6px 9px; }
+  section { padding: 38px 0 6px; }
+  .sec-head { gap: 12px; }
+  .sec-num { font-size: 32px; }
+  .sec-sub { font-size: 14.5px; margin-bottom: 20px; }
+  .card { grid-template-columns: 1fr; padding: 16px; gap: 4px; border-radius: 14px; }
+  .card-side { flex-direction: row; align-items: center; order: -1; justify-content: space-between; margin-bottom: 2px; }
+  .rank { font-size: 22px; }
+  h3.venue { font-size: 17px; }
+  .facts { gap: 2px 16px; font-size: 13px; }
+  .why { font-size: 14.5px; }
+  .tip { font-size: 13.5px; }
+  button.pick { padding: 10px 20px; }
+  .route { padding: 14px 16px; }
+  .tonight { padding: 4px 14px 8px; }
+  .tonight-tag { font-size: 10.5px; padding: 4px 12px; }
+  .avoid-item { padding: 12px 14px; gap: 10px; }
   .prac-grid { grid-template-columns: 1fr; }
-  header.masthead { padding-top: 40px; }
+  .prac { padding: 16px 18px; }
+  .planbar-inner { padding: 10px 16px; gap: 10px; justify-content: space-between; }
+  .plan-count { font-size: 13px; }
   .plan-preview { display: none; }
+  .planbar button { padding: 9px 14px; font-size: 12.5px; }
+  footer.colophon { margin-top: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
@@ -321,7 +343,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 <section id="dinner">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">01</span><h2>Ужин</h2></div>
-    <p class="sec-sub">Опора — экспертная премия WhereToEat (Юг-2025 и лонг-лист России-2026), сверенная с оценками 2ГИС и Яндекса. Тройка лидеров + два ситуативных варианта.</p>
+    <p class="sec-sub">Опора — экспертная премия WhereToEat (Юг-2025 и лонг-лист России-2026), сверенная с оценками 2ГИС и Яндекса. Первая тройка — гастрономический максимум города; дальше — разные жанры и чеки: мясо, итальянское бистро, пицца, локальная классика, казачья кухня у реки.</p>
 
     <div class="cards">
       <article class="card" data-id="ryotei" data-sec="Ужин" data-name="Ryotei">
@@ -381,6 +403,62 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="card-side"><span class="rank">4</span><button class="pick" type="button">В план</button></div>
       </article>
 
+      <article class="card" data-id="ave" data-sec="Ужин" data-name="Ave Bistro">
+        <div class="card-main">
+          <div class="card-name-row">
+            <h3 class="venue">Ave Bistro</h3>
+            <span class="chip award">WhereToEat юг · №15</span>
+            <span class="chip ok">2ГИС 4.7</span>
+          </div>
+          <div class="facts"><span><b>Итальянское бистро</b></span><span>Чапаева, 82/1</span><span>чек <b>~2.5 тыс ₽</b></span></div>
+          <p class="why">Классика Италии в авторской подаче шефа Андрея Солодина: паста, тартары, лазанья и тирамису, которые в отзывах называют лучшими в городе. Стильно и без пафоса.</p>
+          <p class="tip good"><b>Логистика:</b> стоит в кластере Горького/Чапаева — легко связать с Rail и Petrov Vodkin на продолжение.</p>
+        </div>
+        <div class="card-side"><span class="rank">5</span><button class="pick" type="button">В план</button></div>
+      </article>
+
+      <article class="card" data-id="toscana" data-sec="Ужин" data-name="Кубана Тоскана">
+        <div class="card-main">
+          <div class="card-name-row">
+            <h3 class="venue">Кубана Тоскана</h3>
+            <span class="chip ok">2ГИС 5.0 / 441</span>
+            <span class="chip plain">лонг-лист WhereToEat</span>
+          </div>
+          <div class="facts"><span><b>Неаполитанская пицца</b></span><span>Пашковская, 84</span><span>чек <b>1–1.5 тыс ₽</b></span><span>пт-сб до 23:00</span></div>
+          <p class="why">Печь прямо в зале, неаполитанские традиции на кубанский лад. Самый доступный чек в этом списке при рейтинге, которому позавидует любой файн-дайнинг.</p>
+          <p class="tip"><b>Формат:</b> дружеский вечер за пиццей и вином без церемоний и дресс-кода.</p>
+        </div>
+        <div class="card-side"><span class="rank">6</span><button class="pick" type="button">В план</button></div>
+      </article>
+
+      <article class="card" data-id="madyar" data-sec="Ужин" data-name="Мадьяр">
+        <div class="card-main">
+          <div class="card-name-row">
+            <h3 class="venue">Мадьяр</h3>
+            <span class="chip plain">лонг-лист WhereToEat</span>
+            <span class="chip plain">с 2001 года</span>
+          </div>
+          <div class="facts"><span><b>Европейская и венгерская кухня</b></span><span>сеть · флагман на Красных Партизан</span><span>чек <b>1–3 тыс ₽</b></span></div>
+          <p class="why">Первая гастро-легенда города: с этого ресторана началась крупнейшая ресторанная группа Краснодара. Гуляш и семейная классика, проверенная двадцатью пятью годами.</p>
+          <p class="tip"><b>Зачем:</b> понять, как ест сам Краснодар, когда премии и дегустационные сеты надоели.</p>
+        </div>
+        <div class="card-side"><span class="rank">7</span><button class="pick" type="button">В план</button></div>
+      </article>
+
+      <article class="card" data-id="stan" data-sec="Ужин" data-name="Станъ">
+        <div class="card-main">
+          <div class="card-name-row">
+            <h3 class="venue">Станъ</h3>
+            <span class="chip plain">лонг-лист WhereToEat</span>
+            <span class="chip ok">у реки</span>
+          </div>
+          <div class="facts"><span><b>Кубанская и казачья кухня</b></span><span>Кубанская набережная</span><span>чек <b>~1.5 тыс ₽</b></span></div>
+          <p class="why">Казачий колорит на берегу Кубани: летние беседки у воды, картины кубанских художников, борщ и вареники в полном антураже. Работает на впечатление — сюда водят гостей города.</p>
+          <p class="tip"><b>Летом:</b> проси беседку у воды при брони.</p>
+        </div>
+        <div class="card-side"><span class="rank">8</span><button class="pick" type="button">В план</button></div>
+      </article>
+
       <article class="card" data-id="cafekrd" data-sec="Ужин" data-name="Cafe Krasnodar">
         <div class="card-main">
           <div class="card-name-row">
@@ -392,7 +470,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
           <p class="why">Вариант «поужинать в парке» без гастрономических амбиций Ryotei: спокойно, красиво, рядом стадион и прогулка.</p>
           <p class="tip good"><b>Лайфхак:</b> с 17:00 до полуночи работает бесплатный трансфер — предупреди при брони и позвони за 5–10 минут до приезда, машина заберёт от входа в парк и довезёт до дверей.</p>
         </div>
-        <div class="card-side"><span class="rank">5</span><button class="pick" type="button">В план</button></div>
+        <div class="card-side"><span class="rank">9</span><button class="pick" type="button">В план</button></div>
       </article>
     </div>
   </div>
