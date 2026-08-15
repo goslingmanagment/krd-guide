@@ -35,6 +35,8 @@
   --bad: #B03A31;
   --bad-soft: #B03A311E;
   --dusk: radial-gradient(90% 120% at 50% 118%, #E9A05F55 0%, #E9A05F22 45%, transparent 72%);
+  --sky-dusk: radial-gradient(120% 55% at 50% 0%, #E9A05F26, transparent 65%);
+  --sky-night: linear-gradient(180deg, #565C7E21, transparent 75%);
   --shadow: 0 1px 2px rgba(30,20,10,.05), 0 8px 28px rgba(30,20,10,.06);
 }
 @media (prefers-color-scheme: dark) {
@@ -55,6 +57,8 @@
     --bad: #E06055;
     --bad-soft: #E0605522;
     --dusk: radial-gradient(90% 120% at 50% 118%, #FF6A3336 0%, #C2481C18 45%, transparent 72%);
+    --sky-dusk: radial-gradient(120% 55% at 50% 0%, #FF6A331C, transparent 65%);
+    --sky-night: linear-gradient(180deg, #23284259, transparent 80%);
     --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.35);
   }
 }
@@ -75,6 +79,8 @@
   --bad: #E06055;
   --bad-soft: #E0605522;
   --dusk: radial-gradient(90% 120% at 50% 118%, #FF6A3336 0%, #C2481C18 45%, transparent 72%);
+  --sky-dusk: radial-gradient(120% 55% at 50% 0%, #FF6A331C, transparent 65%);
+  --sky-night: linear-gradient(180deg, #23284259, transparent 80%);
   --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 34px rgba(0,0,0,.35);
 }
 
@@ -93,6 +99,13 @@ body {
 .wrap { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
 a { color: inherit; }
 
+/* ---------- evening sky (scroll atmosphere) ---------- */
+.sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.sky::before, .sky::after { content: ''; position: absolute; inset: 0; }
+.sky::before { background: var(--sky-dusk); opacity: calc(1 - var(--nightp, 0)); }
+.sky::after { background: var(--sky-night); opacity: var(--nightp, 0); }
+body > *:not(.sky) { position: relative; z-index: 1; }
+
 /* ---------- masthead ---------- */
 header.masthead {
   padding: 68px 0 46px;
@@ -110,7 +123,14 @@ h1 {
   line-height: 1.04; margin: 0 0 18px; letter-spacing: -.01em;
   text-wrap: balance;
 }
-h1 .dim { color: var(--muted); font-weight: 300; }
+h1 .dim { color: transparent; -webkit-text-stroke: 1.5px var(--muted); font-weight: 400; }
+@supports not (-webkit-text-stroke: 1px black) { h1 .dim { color: var(--muted); font-weight: 300; } }
+
+.masthead .eyebrow { animation: rise .55s ease .05s both; }
+.masthead h1 { animation: rise .55s ease .16s both; }
+.masthead .lede { animation: rise .55s ease .3s both; }
+.masthead .verify-note { animation: rise .55s ease .44s both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .lede { max-width: 62ch; color: var(--muted); font-size: 17px; margin: 0 0 26px; }
 .lede b { color: var(--ink); font-weight: 600; }
 
@@ -128,6 +148,9 @@ nav.toc {
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
+@supports (backdrop-filter: blur(10px)) {
+  nav.toc { background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+}
 nav.toc .wrap { display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; padding-bottom: 10px; }
 nav.toc a {
   flex: none; text-decoration: none; color: var(--muted);
@@ -139,7 +162,16 @@ nav.toc a.active { color: var(--accent); border-color: var(--accent); }
 nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- sections ---------- */
-section { padding: 54px 0 8px; }
+section { padding: 54px 0 8px; position: relative; overflow: clip; }
+.ghost {
+  position: absolute; top: 6px; right: 8px;
+  font-family: 'Unbounded', sans-serif; font-weight: 200;
+  font-size: clamp(84px, 13vw, 168px); line-height: 1;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--ink) 16%, transparent);
+  pointer-events: none; user-select: none; font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+@supports not (-webkit-text-stroke: 1px black) { .ghost { color: var(--line); opacity: .5; } }
 .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
 .sec-num {
   font-family: 'Unbounded', sans-serif; font-weight: 200;
@@ -164,15 +196,26 @@ h2 {
   padding: 20px 24px 0; box-shadow: var(--shadow);
   transition: border-color .15s ease;
 }
-.card:hover { border-color: var(--muted); }
+.card:hover { border-color: var(--muted); box-shadow: 0 6px 36px -10px var(--accent-soft), var(--shadow); }
 .card.picked { border-color: var(--accent); background: linear-gradient(0deg, var(--accent-soft), var(--accent-soft)), var(--surface); }
+
+.card-grid { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 4px 26px; align-items: start; }
+.card-art {
+  aspect-ratio: 16 / 9; align-self: center;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface2) 50%, transparent), transparent);
+  overflow: hidden;
+}
+.card-art svg { width: 100%; height: 100%; display: block; }
 
 .card-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 10px; }
 .rank {
-  font-family: 'Unbounded', sans-serif; font-weight: 200; font-size: 26px;
-  color: var(--muted); opacity: .55; line-height: 1.2; font-variant-numeric: tabular-nums;
+  font-family: 'Unbounded', sans-serif; font-weight: 300; font-size: 26px;
+  color: transparent; -webkit-text-stroke: 1px var(--muted); opacity: .8;
+  line-height: 1.2; font-variant-numeric: tabular-nums;
   min-width: 22px;
 }
+@supports not (-webkit-text-stroke: 1px black) { .rank { color: var(--muted); opacity: .55; } }
 .card-title { flex: 1; min-width: 0; }
 .genre {
   display: block; font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
@@ -260,9 +303,10 @@ button.pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2p
 .route-label { font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
 .route-steps { display: flex; align-items: center; gap: 0; min-width: max-content; }
 .rstep { display: flex; align-items: center; }
+.rstep .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; margin-right: 9px; box-shadow: 0 0 8px var(--accent-soft); }
 .rstep .t { font-family: 'Unbounded', sans-serif; font-weight: 500; font-size: 13px; color: var(--accent); margin-right: 8px; font-variant-numeric: tabular-nums; }
 .rstep .n { font-weight: 650; font-size: 14.5px; white-space: nowrap; }
-.rstep .arr { color: var(--muted); margin: 0 16px; font-size: 15px; }
+.rstep .seg { width: 38px; height: 1px; background: linear-gradient(90deg, var(--accent), var(--line)); margin: 0 14px; flex: none; }
 
 /* ---------- avoid list ---------- */
 .avoid { display: flex; flex-direction: column; gap: 10px; }
@@ -351,6 +395,8 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
   .sec-num { font-size: 32px; }
   .sec-sub { font-size: 14.5px; margin-bottom: 20px; }
   .card { padding: 16px 16px 0; border-radius: 14px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .card-art { order: -1; aspect-ratio: 2 / 1; margin-bottom: 12px; align-self: stretch; }
   .card-head { gap: 10px; }
   .rank { font-size: 20px; min-width: 16px; }
   h3.venue { font-size: 17px; }
@@ -377,11 +423,16 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
   footer.colophon { margin-top: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
   .js-reveal .card, .js-reveal .avoid-item, .js-reveal .prac { opacity: 1; transform: none; }
 }
+@media (max-width: 760px) {
+  .ghost { font-size: clamp(64px, 22vw, 96px); top: 12px; right: 2px; }
+}
 </style>
+
+<div class="sky" aria-hidden="true"></div>
 
 <header class="masthead">
   <div class="wrap">
@@ -404,12 +455,14 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 
 <!-- ================= DINNER ================= -->
 <section id="dinner">
+  <span class="ghost" aria-hidden="true">19:00</span>
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">01</span><h2>Ужин</h2><span class="sec-time">с 19:00</span></div>
     <p class="sec-sub">Опора — две экспертные системы: премия WhereToEat (Юг-2025, шорт-лист России-2026) и инспекторский Ultima Guide Яндекс Еды (южный выпуск, июль 2026), сверенные с оценками 2ГИС и Яндекса. Первая тройка — гастрономический максимум города; дальше — разные жанры и чеки. Ценник: ₽ до 1.5 тыс, ₽₽ 1.5–3 тыс, ₽₽₽ от 3 тыс на человека.</p>
 
     <div class="cards">
       <article class="card" data-id="ryotei" data-sec="Ужин" data-name="Ryotei">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Японская кухня · Японский сад парка Галицкого</span><h3 class="venue">Ryotei</h3></div>
@@ -419,6 +472,71 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Главный вау-ресторан города: суши и вагю с видом на крупнейший японский сад за пределами Японии. Сомелье года по версии премии, 50+ позиций нихонсю по бокалам.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">суши с чу-торо</span><span class="dish">вагю</span><span class="dish">гёдза ручной лепки</span><span class="dish">устрицы</span><span class="dish">моти</span></div>
         <p class="tip good"><b>Лайфхак:</b> депозит при брони даёт QR-код — вход в Японский сад без общей очереди (активен за 30 мин до брони днём, за час — после 20:00). Приезжай заранее и гуляй по саду. Отмена депозита — минимум за 2 дня.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <defs>
+    <path id="ryotei-leaf" d="M0 3 L-2 -4 L-8 -2 L-5 -8 L-11 -9 L-5 -12 L-7 -18 L-2 -14 L0 -21 L2 -14 L7 -18 L5 -12 L11 -9 L5 -8 L8 -2 L2 -4 Z"/>
+  </defs>
+
+  <!-- moon with halo -->
+  <circle cx="466" cy="106" r="86" style="fill:var(--accent)" fill-opacity="0.08"/>
+  <circle cx="466" cy="106" r="60" style="fill:var(--accent)" fill-opacity="0.14"/>
+  <circle cx="466" cy="106" r="44" style="fill:var(--accent)" fill-opacity="0.9"/>
+
+  <!-- far hills -->
+  <path d="M0 262 C60 234 140 228 220 244 C290 258 310 262 330 262 Z" style="fill:var(--muted)" fill-opacity="0.18"/>
+  <path d="M360 262 C420 240 500 236 560 248 C600 254 620 260 640 262 Z" style="fill:var(--muted)" fill-opacity="0.14"/>
+
+  <!-- pond -->
+  <rect x="0" y="262" width="640" height="98" style="fill:var(--surface2)" fill-opacity="0.32"/>
+
+  <!-- torii reflection -->
+  <g style="fill:var(--ink)" fill-opacity="0.13">
+    <path d="M146 266 L166 266 L160 344 L150 344 Z"/>
+    <path d="M236 266 L256 266 L250 344 L240 344 Z"/>
+    <path d="M116 312 C180 300 220 300 284 312 L284 322 C220 310 180 310 116 322 Z"/>
+  </g>
+
+  <!-- torii -->
+  <g style="fill:var(--ink)" fill-opacity="0.88">
+    <path d="M110 134 C170 118 230 118 290 134 L290 150 C230 136 170 136 110 150 Z"/>
+    <rect x="126" y="176" width="148" height="11"/>
+    <rect x="195" y="150" width="10" height="26"/>
+    <path d="M148 144 L162 144 L168 264 L142 264 Z"/>
+    <path d="M238 144 L252 144 L258 264 L232 264 Z"/>
+  </g>
+
+  <!-- maple branch -->
+  <path d="M-8 28 C60 50 120 56 178 40" style="stroke:var(--ink);fill:none" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <path d="M70 44 C96 62 122 66 146 60" style="stroke:var(--ink);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <use href="#ryotei-leaf" transform="translate(64 48) rotate(40) scale(1.3)" style="fill:var(--ink)" fill-opacity="0.8"/>
+  <use href="#ryotei-leaf" transform="translate(110 56) rotate(-15) scale(1.1)" style="fill:var(--ink)" fill-opacity="0.8"/>
+  <use href="#ryotei-leaf" transform="translate(150 54) rotate(15) scale(1.25)" style="fill:var(--ink)" fill-opacity="0.7"/>
+  <use href="#ryotei-leaf" transform="translate(180 42) rotate(-30)" style="fill:var(--muted)" fill-opacity="0.55"/>
+  <use href="#ryotei-leaf" transform="translate(132 68) rotate(60) scale(0.9)" style="fill:var(--muted)" fill-opacity="0.5"/>
+  <!-- falling leaf -->
+  <use href="#ryotei-leaf" transform="translate(250 150) rotate(25) scale(1.1)" style="fill:var(--accent)" fill-opacity="0.65"/>
+
+  <!-- moon reflection -->
+  <ellipse cx="466" cy="276" rx="30" ry="5" style="fill:var(--accent)" fill-opacity="0.3"/>
+  <path d="M440 292 H500" style="stroke:var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
+  <path d="M452 304 H488" style="stroke:var(--accent)" stroke-width="2" stroke-linecap="round" opacity="0.14"/>
+
+  <!-- ripples -->
+  <g style="stroke:var(--line)" stroke-width="2" stroke-linecap="round" opacity="0.4">
+    <path d="M60 292 H140"/>
+    <path d="M180 306 H280"/>
+    <path d="M320 330 H420"/>
+    <path d="M520 316 H600"/>
+  </g>
+
+  <!-- foreground bank -->
+  <path d="M640 360 V322 C570 314 500 324 440 348 L440 360 Z" style="fill:var(--ink)" fill-opacity="0.8"/>
+  <g style="stroke:var(--ink);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.6">
+    <path d="M556 328 C560 316 558 308 554 302"/>
+    <path d="M580 324 C584 312 582 302 578 296"/>
+    <path d="M604 320 C608 308 606 300 602 294"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Разведчика Леонова, 7А</b></span><span>09:00–23:00</span><span>+7 938 508-88-77</span><span>чек 4–6 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://ryotei.ru" target="_blank" rel="noopener">бронь ↗</a><button class="pick" type="button">В план</button></div>
@@ -426,6 +544,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="pech" data-sec="Ужин" data-name="The Печь">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Кубанская кухня из печи · исторический центр</span><h3 class="venue">The Печь</h3></div>
@@ -435,6 +554,52 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Флагман главного шефа города (Bocuse d'Or Russia). Самый надёжный выбор «за едой»: всё строится вокруг живой русской печи. Сюда же переехало наследие закрывшегося «Угли-Угли» — та же команда и печная школа.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">пирожки с уткой и яблоками · 770 ₽</span><span class="dish">борщ из печи с ватрушкой · 550 ₽</span><span class="dish">телячьи щёки · 1200 ₽</span><span class="dish">крем-брюле из кореновской сгущёнки</span></div>
         <p class="tip"><b>Важно:</b> бронь на вечер обязательна — зал небольшой, а место культовое.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <!-- back wall dome -->
+  <path d="M96 342 C96 210 190 96 320 96 C450 96 544 210 544 342 Z" style="fill:var(--muted)" fill-opacity="0.1"/>
+
+  <!-- brick arch band -->
+  <path d="M150 342 C150 236 222 152 320 152 C418 152 490 236 490 342 Z" style="fill:var(--ink)" fill-opacity="0.8"/>
+  <!-- dark mouth -->
+  <path d="M196 342 C196 262 250 198 320 198 C390 198 444 262 444 342 Z" style="fill:var(--ink)" fill-opacity="0.9"/>
+
+  <!-- brick joints -->
+  <g style="stroke:var(--line)" stroke-width="2" stroke-linecap="round" opacity="0.35">
+    <path d="M168 300 L210 312"/>
+    <path d="M190 240 L228 262"/>
+    <path d="M226 192 L256 224"/>
+    <path d="M275 162 L292 202"/>
+    <path d="M365 162 L348 202"/>
+    <path d="M414 192 L384 224"/>
+    <path d="M450 240 L412 262"/>
+    <path d="M472 300 L430 312"/>
+  </g>
+
+  <!-- hearth glow -->
+  <ellipse cx="320" cy="336" rx="96" ry="12" style="fill:var(--accent)" fill-opacity="0.12"/>
+
+  <!-- logs -->
+  <rect x="266" y="314" width="104" height="11" rx="5" transform="rotate(-7 318 320)" style="fill:var(--ink)" fill-opacity="0.85"/>
+  <rect x="272" y="322" width="96" height="11" rx="5" transform="rotate(6 320 328)" style="fill:var(--ink)" fill-opacity="0.85"/>
+
+  <!-- fire -->
+  <path d="M282 316 C278 298 290 286 286 268 C298 280 302 292 308 280 C316 262 306 246 316 226 C330 244 334 268 328 288 C338 280 342 264 340 250 C356 270 358 298 344 312 C328 326 300 326 282 316 Z" style="fill:var(--accent)" fill-opacity="0.85"/>
+  <path d="M300 314 C296 300 306 290 302 276 C312 286 314 296 320 286 C326 274 320 262 326 250 C336 266 336 288 328 300 C320 312 308 316 300 314 Z" style="fill:var(--accent-soft)" fill-opacity="0.9"/>
+
+  <!-- sparks -->
+  <g style="fill:var(--accent)">
+    <circle cx="334" cy="240" r="2.5" fill-opacity="0.6"/>
+    <circle cx="308" cy="222" r="2" fill-opacity="0.45"/>
+    <circle cx="346" cy="212" r="1.8" fill-opacity="0.35"/>
+    <circle cx="322" cy="252" r="2.2" fill-opacity="0.75"/>
+    <circle cx="352" cy="132" r="2.5" fill-opacity="0.4"/>
+    <circle cx="330" cy="110" r="2" fill-opacity="0.3"/>
+    <circle cx="368" cy="86" r="1.8" fill-opacity="0.22"/>
+  </g>
+
+  <!-- floor line -->
+  <path d="M90 342 H550" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Ленина, 38</b></span><span>до 23:00</span><span>чек 2.5–4 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001017195387" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -442,6 +607,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="kraken" data-sec="Ужин" data-name="The Great Kraken">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">3</span>
           <div class="card-title"><span class="genre">Рыба и морепродукты · панорамный этаж</span><h3 class="venue">The Great Kraken</h3></div>
@@ -451,6 +617,52 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Устрицы, крабы и морские ежи из аквариума, икорный бар, raw-подача по итальянско-японским рецептам. Панорамные окна на закат и веранда.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">устрицы</span><span class="dish">краб из аквариума</span><span class="dish">икорный бар</span><span class="dish">рыба на гриле</span></div>
         <p class="tip"><b>Оговорка:</b> в отзывах встречается жалоба на устрицы в жару — сырой бар в августе на свой вкус, горячая кухня без вопросов.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <!-- back tentacle -->
+  <path d="M262 332 C258 260 268 214 296 184 C312 167 314 148 302 142 C293 138 284 146 289 156 C293 164 302 163 303 154 C309 168 300 182 286 190 C268 214 274 268 280 332 Z" style="fill:var(--muted)" fill-opacity="0.28"/>
+
+  <!-- back wave -->
+  <path d="M0 268 C40 252 80 252 120 264 C160 276 200 250 240 258 C280 266 320 250 360 258 C400 266 440 252 480 260 C520 268 560 252 600 260 L640 266 V360 H0 Z" style="fill:var(--muted)" fill-opacity="0.18"/>
+
+  <!-- left tentacle (front) -->
+  <path d="M84 360 C96 250 138 178 198 138 C240 110 258 82 240 64 C226 50 202 56 202 74 C202 88 218 94 228 84 C224 100 206 108 188 122 C130 166 116 252 126 360 Z" style="fill:var(--ink)" fill-opacity="0.85"/>
+
+  <!-- right tentacle (mid) -->
+  <path d="M556 360 C544 250 502 178 442 138 C400 110 382 82 400 64 C414 50 438 56 438 74 C438 88 422 94 412 84 C416 100 434 108 452 122 C510 166 524 252 514 360 Z" style="fill:var(--ink)" fill-opacity="0.5"/>
+
+  <!-- suckers on front tentacle -->
+  <g style="fill:var(--line)" fill-opacity="0.6">
+    <circle cx="176" cy="140" r="4"/>
+    <circle cx="150" cy="202" r="5"/>
+    <circle cx="140" cy="238" r="5.5"/>
+    <circle cx="133" cy="272" r="6"/>
+  </g>
+  <!-- the accent sucker -->
+  <circle cx="162" cy="170" r="10" style="fill:var(--accent)" fill-opacity="0.16"/>
+  <circle cx="162" cy="170" r="5.5" style="fill:var(--accent)" fill-opacity="0.9"/>
+
+  <!-- mid wave -->
+  <path d="M0 300 C50 284 90 296 140 292 C190 288 230 302 280 296 C330 290 370 304 420 298 C470 292 510 306 560 298 C600 292 620 298 640 294 V360 H0 Z" style="fill:var(--ink)" fill-opacity="0.38"/>
+
+  <!-- oyster shell -->
+  <path d="M320 336 L268 296 C268 262 292 240 320 240 C348 240 372 262 372 296 Z" style="fill:var(--surface2);stroke:var(--ink)" stroke-width="2" fill-opacity="0.85" stroke-opacity="0.8"/>
+  <g style="stroke:var(--ink)" stroke-width="2" stroke-linecap="round" opacity="0.5">
+    <path d="M320 330 L284 288"/>
+    <path d="M320 330 L305 262"/>
+    <path d="M320 330 L335 262"/>
+    <path d="M320 330 L356 288"/>
+  </g>
+  <circle cx="320" cy="268" r="10" style="fill:var(--line);stroke:var(--ink)" stroke-width="2" fill-opacity="0.9" stroke-opacity="0.6"/>
+
+  <!-- front wave -->
+  <path d="M0 330 C60 316 120 330 180 324 C240 318 300 332 360 326 C420 320 480 334 540 326 C590 320 620 326 640 322 V360 H0 Z" style="fill:var(--ink)" fill-opacity="0.75"/>
+
+  <!-- wave curls -->
+  <g style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.5">
+    <path d="M96 322 C110 306 132 306 138 320 C142 330 132 336 124 330"/>
+    <path d="M430 294 C442 280 462 280 468 292 C472 302 462 308 455 302"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красных Партизан, 134 · 4 этаж</b></span><span>чек 2–3.5 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://kraken.restaurant" target="_blank" rel="noopener">сайт ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001039551288" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -458,6 +670,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="skotina" data-sec="Ужин" data-name="Скотина">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">4</span>
           <div class="card-title"><span class="genre">Мясо · собственный цех и выдержка</span><h3 class="venue">Скотина</h3></div>
@@ -467,6 +680,54 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Концептуальный мясной: собственная разделка и выдержка местного мяса, угольные печи, субпродукты и редкие отрубы. Вариант, когда хочется засидеться позже 23:00.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">пирог Мясника с ребром · 1190 ₽</span><span class="dish">салат с копчёным языком</span><span class="dish">диафрагма</span><span class="dish">«Наполеон» · 550 ₽</span></div>
         <p class="tip"><b>Оговорка:</b> отзывы 2025-го смешанные — иди за мясным вечером с настойками, без завышенных ожиданий от премиальных стейков (рибай ~4.5 тыс).</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <!-- coal smoke behind -->
+  <g style="fill:var(--muted)">
+    <circle cx="262" cy="124" r="34" fill-opacity="0.14"/>
+    <circle cx="300" cy="96" r="40" fill-opacity="0.12"/>
+    <circle cx="330" cy="110" r="36" fill-opacity="0.12"/>
+    <circle cx="352" cy="72" r="30" fill-opacity="0.1"/>
+    <circle cx="398" cy="54" r="24" fill-opacity="0.09"/>
+    <circle cx="440" cy="40" r="18" fill-opacity="0.07"/>
+  </g>
+
+  <!-- ember glow under the bull -->
+  <ellipse cx="295" cy="312" rx="70" ry="8" style="fill:var(--accent)" fill-opacity="0.1"/>
+  <g style="fill:var(--accent)">
+    <circle cx="250" cy="310" r="3" fill-opacity="0.8"/>
+    <circle cx="280" cy="312" r="2.5" fill-opacity="0.6"/>
+    <circle cx="312" cy="310" r="3" fill-opacity="0.85"/>
+    <circle cx="338" cy="312" r="2" fill-opacity="0.5"/>
+  </g>
+
+  <!-- far pair of legs -->
+  <path d="M212 274 L228 274 L228 316 L212 316 Z" style="fill:var(--ink)" fill-opacity="0.45"/>
+  <path d="M390 276 L406 276 L406 316 L390 316 Z" style="fill:var(--ink)" fill-opacity="0.45"/>
+
+  <!-- bull silhouette -->
+  <path d="M120 196 C112 206 110 220 118 230 C126 240 142 244 158 244 C164 252 168 262 170 274 C172 292 174 304 174 316 L196 316 L198 276 C240 290 300 294 352 288 L354 316 L376 316 L378 282 C420 276 462 258 478 226 C488 204 486 178 470 162 C440 140 400 132 360 132 C320 132 285 120 258 118 C236 118 220 128 208 142 C196 156 180 162 164 162 C140 162 126 176 120 196 Z" style="fill:var(--ink)" fill-opacity="0.88"/>
+  <!-- horn -->
+  <path d="M172 156 C150 140 128 140 112 152 C120 130 152 122 176 138 C180 142 178 152 172 156 Z" style="fill:var(--ink)" fill-opacity="0.88"/>
+  <!-- ear -->
+  <ellipse cx="198" cy="150" rx="12" ry="7" transform="rotate(-20 198 150)" style="fill:var(--ink)" fill-opacity="0.88"/>
+  <!-- tail -->
+  <path d="M472 172 C496 190 500 226 488 258" style="stroke:var(--ink);fill:none" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+  <path d="M484 254 C492 252 496 260 492 272 C488 282 480 280 480 268 Z" style="fill:var(--ink)" fill-opacity="0.8"/>
+
+  <!-- ground line -->
+  <path d="M70 316 H570" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- rail of hooks -->
+  <path d="M90 336 H550" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+  <g style="stroke:var(--muted);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.6">
+    <path d="M140 336 v8 a8 8 0 0 0 16 0 v-3"/>
+    <path d="M210 336 v8 a8 8 0 0 0 16 0 v-3"/>
+    <path d="M280 336 v8 a8 8 0 0 0 16 0 v-3"/>
+    <path d="M350 336 v8 a8 8 0 0 0 16 0 v-3"/>
+    <path d="M420 336 v8 a8 8 0 0 0 16 0 v-3"/>
+    <path d="M490 336 v8 a8 8 0 0 0 16 0 v-3"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Суворова, 64 · 2 этаж</b></span><span>вс-чт до 00:00, пт-сб до 01:00</span><span>чек 3–5 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://scotina.ru" target="_blank" rel="noopener">сайт ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001006306287" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -474,6 +735,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="ave" data-sec="Ужин" data-name="Ave Bistro">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">5</span>
           <div class="card-title"><span class="genre">Итальянское бистро · кластер Горького/Чапаева</span><h3 class="venue">Ave Bistro</h3></div>
@@ -483,6 +745,52 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Классика Италии в авторской подаче: паста и тартары, которые в отзывах называют лучшими в городе. Стильно и без пафоса.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">паста</span><span class="dish">тартар</span><span class="dish">лазанья</span><span class="dish">тирамису</span></div>
         <p class="tip good"><b>Логистика:</b> рядом Rail и Petrov Vodkin — продолжение вечера в двух шагах.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <!-- table line -->
+  <path d="M40 344 H600" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- plate -->
+  <circle cx="320" cy="192" r="150" style="fill:var(--surface2);stroke:var(--line)" stroke-width="2" fill-opacity="0.3" stroke-opacity="0.8"/>
+  <circle cx="320" cy="192" r="116" style="fill:none;stroke:var(--line)" stroke-width="2" stroke-opacity="0.45"/>
+
+  <!-- pasta nest -->
+  <g style="fill:none" stroke-width="3" stroke-linecap="round">
+    <path d="M232 208 C238 176 292 160 336 172 C368 180 380 200 372 220" style="stroke:var(--ink)" opacity="0.7"/>
+    <path d="M244 232 C224 210 240 178 286 168" style="stroke:var(--muted)" opacity="0.55"/>
+    <path d="M258 244 C300 262 352 254 372 228 C382 214 378 196 362 186" style="stroke:var(--ink)" opacity="0.6"/>
+    <path d="M270 190 C290 172 330 172 350 190 C362 200 362 214 350 222" style="stroke:var(--muted)" opacity="0.5"/>
+    <path d="M282 236 C310 248 344 242 356 224" style="stroke:var(--ink)" opacity="0.75"/>
+    <path d="M252 180 C286 160 336 162 360 184" style="stroke:var(--accent)" opacity="0.85"/>
+    <path d="M262 226 C296 244 338 240 358 218" style="stroke:var(--accent)" opacity="0.55"/>
+  </g>
+
+  <!-- fork from top-right, tines in the nest -->
+  <g transform="translate(455 8) rotate(36)" style="fill:var(--ink)" fill-opacity="0.85">
+    <rect x="-8" y="0" width="16" height="148" rx="8"/>
+    <path d="M-6 146 L6 146 L11 178 L-11 178 Z"/>
+    <path d="M-25 178 C-32 196 -32 210 -24 216 L24 216 C32 210 32 196 25 178 Z"/>
+    <rect x="-25" y="214" width="6.8" height="44" rx="3"/>
+    <rect x="-11.6" y="214" width="6.8" height="44" rx="3"/>
+    <rect x="1.8" y="214" width="6.8" height="44" rx="3"/>
+    <rect x="15.2" y="214" width="6.8" height="44" rx="3"/>
+  </g>
+  <!-- strand wrapping the tines -->
+  <path d="M290 216 C300 208 314 208 321 216" style="stroke:var(--accent);fill:none" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+
+  <!-- olive branch -->
+  <path d="M18 44 C70 66 118 92 150 128 C160 138 168 150 172 162" style="stroke:var(--muted);fill:none" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M96 84 C118 88 138 100 150 112" style="stroke:var(--muted);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <g style="fill:var(--muted)">
+    <ellipse cx="46" cy="52" rx="14" ry="4.5" transform="rotate(-15 46 52)" fill-opacity="0.55"/>
+    <ellipse cx="70" cy="64" rx="14" ry="4.5" transform="rotate(30 70 64)" fill-opacity="0.45"/>
+    <ellipse cx="96" cy="82" rx="14" ry="4.5" transform="rotate(-5 96 82)" fill-opacity="0.6"/>
+    <ellipse cx="120" cy="98" rx="14" ry="4.5" transform="rotate(40 120 98)" fill-opacity="0.45"/>
+    <ellipse cx="140" cy="116" rx="14" ry="4.5" transform="rotate(5 140 116)" fill-opacity="0.6"/>
+    <ellipse cx="156" cy="138" rx="14" ry="4.5" transform="rotate(55 156 138)" fill-opacity="0.5"/>
+  </g>
+  <circle cx="88" cy="98" r="7" style="fill:var(--ink)" fill-opacity="0.8"/>
+  <circle cx="110" cy="114" r="6.5" style="fill:var(--ink)" fill-opacity="0.6"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Чапаева, 82/1</b></span><span>чек ~2.5 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001081533539" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -490,6 +798,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="toscana" data-sec="Ужин" data-name="Кубана Тоскана">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">6</span>
           <div class="card-title"><span class="genre">Неаполитанская пицца · печь в зале</span><h3 class="venue">Кубана Тоскана</h3></div>
@@ -499,6 +808,51 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Неаполитанские традиции на кубанский лад: печь прямо в зале, тесто на глазах. Самый доступный чек в этом списке при рейтинге, которому позавидует любой файн-дайнинг.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">пицца из печи</span><span class="dish">вино бокалами</span></div>
         <p class="tip"><b>Формат:</b> дружеский вечер без церемоний и дресс-кода.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <!-- back wall glow -->
+  <circle cx="400" cy="236" r="178" style="fill:var(--muted)" fill-opacity="0.08"/>
+
+  <!-- chimney + smoke -->
+  <rect x="382" y="92" width="36" height="46" style="fill:var(--ink)" fill-opacity="0.85"/>
+  <path d="M400 84 C394 70 406 60 400 46" style="stroke:var(--muted);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+
+  <!-- oven dome -->
+  <path d="M244 322 C244 206 306 134 402 134 C498 134 558 206 558 322 Z" style="fill:var(--ink)" fill-opacity="0.85"/>
+  <path d="M270 322 C270 226 322 162 400 158" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+  <path d="M532 322 C532 226 480 162 402 158" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
+
+  <!-- mouth -->
+  <path d="M336 322 C336 260 362 232 400 232 C438 232 464 260 464 322 Z" style="fill:var(--ink)" fill-opacity="0.9"/>
+
+  <!-- floor glow from the mouth -->
+  <ellipse cx="400" cy="322" rx="72" ry="9" style="fill:var(--accent)" fill-opacity="0.14"/>
+
+  <!-- fire -->
+  <path d="M368 322 C362 306 370 294 366 280 C378 288 382 300 386 290 C392 276 384 264 392 248 C402 262 406 280 402 294 C410 288 414 276 412 264 C424 280 426 304 414 316 C402 326 382 328 368 322 Z" style="fill:var(--accent)" fill-opacity="0.85"/>
+  <path d="M384 320 C380 308 388 298 386 288 C394 296 396 306 400 298 C406 288 402 278 406 270 C414 284 412 304 402 314 C396 320 390 322 384 320 Z" style="fill:var(--accent-soft)" fill-opacity="0.9"/>
+
+  <!-- peel with pizza -->
+  <path d="M30 310 L288 294 L288 302 L30 318 Z" style="fill:var(--ink)" fill-opacity="0.7"/>
+  <path d="M282 276 C280 268 350 266 356 288 C360 302 286 308 282 298 Z" style="fill:var(--muted)" fill-opacity="0.55"/>
+  <circle cx="318" cy="286" r="20" style="fill:var(--surface2);stroke:var(--muted)" stroke-width="2" fill-opacity="0.85" stroke-opacity="0.8"/>
+  <g style="fill:var(--ink)" fill-opacity="0.7">
+    <circle cx="311" cy="280" r="2.5"/>
+    <circle cx="325" cy="282" r="2.5"/>
+    <circle cx="316" cy="292" r="2.5"/>
+    <circle cx="327" cy="293" r="2.5"/>
+  </g>
+
+  <!-- sparks -->
+  <g style="fill:var(--accent)">
+    <circle cx="416" cy="80" r="2.5" fill-opacity="0.6"/>
+    <circle cx="428" cy="62" r="2" fill-opacity="0.4"/>
+    <circle cx="406" cy="52" r="1.8" fill-opacity="0.28"/>
+    <circle cx="446" cy="300" r="2" fill-opacity="0.5"/>
+  </g>
+
+  <!-- ground line -->
+  <path d="M40 322 H600" style="stroke:var(--line);fill:none" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Пашковская, 84</b></span><span>вс-чт до 22:00, пт-сб до 23:00</span><span>чек 1–1.5 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001054595057" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -506,6 +860,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="yiayia" data-sec="Ужин" data-name="Яя (Yiayia)">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">7</span>
           <div class="card-title"><span class="genre">Греческая нео-таверна · панорамный зал</span><h3 class="venue">Яя (Yiayia)</h3></div>
@@ -515,6 +870,64 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Масштабная греческая нео-таверна на месте легендарного Fratelli: мезе, мусака, хачапури и гриль, своя кофейня и фонтан. Пятёрка при ~1300 отзывов — редкое сочетание размаха и стабильности.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">сет мезе</span><span class="dish">мусака</span><span class="dish">хачапури</span><span class="dish">гриль</span></div>
         <p class="tip good"><b>Бонус:</b> работает с 09:00 — годится и на завтрак, и на длинный ужин.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="320" cy="252" r="150" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="320" cy="252" r="92" fill="var(--accent)" fill-opacity="0.09"/>
+  <circle cx="320" cy="252" r="46" fill="var(--accent)" fill-opacity="0.14"/>
+  <line x1="56" y1="336" x2="584" y2="336" stroke="var(--line)" stroke-width="2"/>
+
+  <rect x="116" y="88" width="68" height="9" fill="var(--ink)" fill-opacity="0.85"/>
+  <circle cx="124" cy="106" r="10" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="176" cy="106" r="10" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <rect x="134" y="99" width="32" height="12" fill="var(--ink)" fill-opacity="0.7"/>
+  <rect x="132" y="113" width="36" height="202" fill="var(--muted)" fill-opacity="0.35"/>
+  <line x1="142" y1="120" x2="142" y2="308" stroke="var(--line)" stroke-width="2" opacity="0.8"/>
+  <line x1="158" y1="120" x2="158" y2="308" stroke="var(--line)" stroke-width="2" opacity="0.8"/>
+  <rect x="126" y="315" width="48" height="9" fill="var(--ink)" fill-opacity="0.8"/>
+  <rect x="118" y="324" width="64" height="12" fill="var(--ink)" fill-opacity="0.85"/>
+
+  <rect x="456" y="88" width="68" height="9" fill="var(--ink)" fill-opacity="0.85"/>
+  <circle cx="464" cy="106" r="10" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="516" cy="106" r="10" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <rect x="474" y="99" width="32" height="12" fill="var(--ink)" fill-opacity="0.7"/>
+  <rect x="472" y="113" width="36" height="202" fill="var(--muted)" fill-opacity="0.35"/>
+  <line x1="482" y1="120" x2="482" y2="308" stroke="var(--line)" stroke-width="2" opacity="0.8"/>
+  <line x1="498" y1="120" x2="498" y2="308" stroke="var(--line)" stroke-width="2" opacity="0.8"/>
+  <rect x="466" y="315" width="48" height="9" fill="var(--ink)" fill-opacity="0.8"/>
+  <rect x="458" y="324" width="64" height="12" fill="var(--ink)" fill-opacity="0.85"/>
+
+  <path d="M320 196C320 168 316 146 320 120" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.75" stroke-linecap="round"/>
+  <path d="M310 200C284 168 250 150 214 152" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+  <path d="M330 200C356 168 390 150 426 152" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+  <circle cx="320" cy="110" r="3" fill="var(--muted)" fill-opacity="0.75"/>
+  <circle cx="203" cy="157" r="3" fill="var(--muted)" fill-opacity="0.6"/>
+  <circle cx="189" cy="166" r="2.5" fill="var(--muted)" fill-opacity="0.45"/>
+  <circle cx="437" cy="157" r="3" fill="var(--muted)" fill-opacity="0.6"/>
+  <circle cx="451" cy="166" r="2.5" fill="var(--muted)" fill-opacity="0.45"/>
+
+  <path d="M304 208C304 220 298 228 290 238C276 256 276 282 292 296C304 306 336 306 348 296C364 282 364 256 350 238C342 228 336 220 336 208Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <ellipse cx="320" cy="205" rx="25" ry="7" fill="var(--ink)" fill-opacity="0.9"/>
+  <path d="M301 214C282 216 274 232 285 245" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.85"/>
+  <path d="M339 214C358 216 366 232 355 245" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.85"/>
+  <path d="M306 304L302 320L338 320L334 304Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <rect x="294" y="320" width="52" height="9" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M303 236C296 252 297 272 306 284" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.5"/>
+
+  <path d="M30 332C80 314 128 312 176 324" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.8"/>
+  <ellipse cx="60" cy="316" rx="13" ry="5" fill="var(--muted)" fill-opacity="0.6" transform="rotate(-22 60 316)"/>
+  <ellipse cx="88" cy="310" rx="13" ry="5" fill="var(--muted)" fill-opacity="0.6" transform="rotate(-14 88 310)"/>
+  <ellipse cx="118" cy="307" rx="13" ry="5" fill="var(--muted)" fill-opacity="0.6" transform="rotate(-6 118 307)"/>
+  <ellipse cx="148" cy="310" rx="13" ry="5" fill="var(--muted)" fill-opacity="0.6" transform="rotate(6 148 310)"/>
+  <ellipse cx="76" cy="328" rx="12" ry="5" fill="var(--muted)" fill-opacity="0.55" transform="rotate(14 76 328)"/>
+  <circle cx="104" cy="319" r="5" fill="var(--ink)" fill-opacity="0.8"/>
+  <circle cx="134" cy="320" r="5" fill="var(--ink)" fill-opacity="0.8"/>
+
+  <path d="M610 332C570 318 540 316 506 324" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.7"/>
+  <ellipse cx="580" cy="317" rx="12" ry="5" fill="var(--muted)" fill-opacity="0.55" transform="rotate(16 580 317)"/>
+  <ellipse cx="552" cy="312" rx="12" ry="5" fill="var(--muted)" fill-opacity="0.55" transform="rotate(8 552 312)"/>
+  <ellipse cx="524" cy="313" rx="12" ry="5" fill="var(--muted)" fill-opacity="0.55" transform="rotate(-4 524 313)"/>
+  <circle cx="566" cy="322" r="4.5" fill="var(--ink)" fill-opacity="0.7"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Николая Кондратенко, 14</b></span><span>09:00–00:00</span><span>чек ~1.6 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001075532887" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -522,6 +935,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="katenka" data-sec="Ужин" data-name="Катенька-Катюша">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">8</span>
           <div class="card-title"><span class="genre">Современная южнорусская кухня · самый центр</span><h3 class="venue">Катенька-Катюша</h3></div>
@@ -531,6 +945,48 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">«Кухня прекрасного города»: курник, вареники и староказачьи яхны из локальных продуктов в двухэтажном особняке на Красной. Порции большие, цены демократичные — сильная локальная кухня без файн-дайнинг-пафоса.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">курник</span><span class="dish">вареники</span><span class="dish">яхны</span></div>
         <p class="tip good"><b>Бонус:</b> панорамная веранда и завтраки — годится и на день.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="320" cy="250" r="150" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="320" cy="250" r="88" fill="var(--accent)" fill-opacity="0.09"/>
+  <circle cx="320" cy="250" r="44" fill="var(--accent)" fill-opacity="0.13"/>
+
+  <rect x="140" y="298" width="360" height="40" fill="var(--surface2)" fill-opacity="0.8" stroke="var(--line)" stroke-width="2"/>
+  <path d="M178 318l10-9 10 9-10 9zM222 318l10-9 10 9-10 9zM266 318l10-9 10 9-10 9zM310 318l10-9 10 9-10 9zM354 318l10-9 10 9-10 9zM398 318l10-9 10 9-10 9zM442 318l10-9 10 9-10 9z" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.8"/>
+  <path d="M146 338v10M156 338v10M166 338v10M474 338v10M484 338v10M494 338v10" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.7"/>
+
+  <path d="M212 298C212 252 248 226 320 226C392 226 428 252 428 298Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M212 298q13-14 27 0q13-14 27 0q13-14 27 0q13-14 27 0q13-14 27 0q13-14 27 0q13-14 27 0q13-14 27 0" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.75"/>
+  <path d="M240 282C266 262 374 262 400 282" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+  <path d="M262 260C284 246 356 246 378 260" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4"/>
+  <circle cx="320" cy="222" r="8" fill="var(--ink)" fill-opacity="0.9"/>
+  <circle cx="320" cy="222" r="3" fill="var(--accent)" fill-opacity="0.85"/>
+
+  <path d="M320 206C308 186 332 168 320 144C312 128 324 114 318 96" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+  <path d="M288 212C280 196 294 182 286 162" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45" stroke-linecap="round"/>
+  <path d="M352 212C360 196 346 182 354 162" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45" stroke-linecap="round"/>
+
+  <path d="M100 336C104 296 108 262 114 230" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4"/>
+  <ellipse cx="112" cy="222" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.35" transform="rotate(-8 112 222)"/>
+  <ellipse cx="106" cy="240" rx="5" ry="11" fill="var(--muted)" fill-opacity="0.35" transform="rotate(-14 106 240)"/>
+  <path d="M124 336C128 292 132 254 138 212" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.75"/>
+  <ellipse cx="132" cy="230" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(-18 132 230)"/>
+  <ellipse cx="144" cy="238" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(14 144 238)"/>
+  <ellipse cx="128" cy="248" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(-16 128 248)"/>
+  <ellipse cx="140" cy="256" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(12 140 256)"/>
+  <ellipse cx="136" cy="214" rx="5" ry="13" fill="var(--muted)" fill-opacity="0.75" transform="rotate(-2 136 214)"/>
+  <path d="M132 220L120 176M138 210L134 166M144 224L154 180" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+
+  <path d="M540 336C536 296 532 262 526 230" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4"/>
+  <ellipse cx="528" cy="222" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.35" transform="rotate(8 528 222)"/>
+  <ellipse cx="534" cy="240" rx="5" ry="11" fill="var(--muted)" fill-opacity="0.35" transform="rotate(14 534 240)"/>
+  <path d="M516 336C512 292 508 254 502 212" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.75"/>
+  <ellipse cx="508" cy="230" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(18 508 230)"/>
+  <ellipse cx="496" cy="238" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(-14 496 238)"/>
+  <ellipse cx="512" cy="248" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(16 512 248)"/>
+  <ellipse cx="500" cy="256" rx="5" ry="12" fill="var(--muted)" fill-opacity="0.75" transform="rotate(-12 500 256)"/>
+  <ellipse cx="504" cy="214" rx="5" ry="13" fill="var(--muted)" fill-opacity="0.75" transform="rotate(2 504 214)"/>
+  <path d="M508 220L520 176M502 210L506 166M496 224L486 180" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красная, 16</b></span><span>чек 1.2–2 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001037755778" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -538,6 +994,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="teplye" data-sec="Ужин" data-name="Тёплые страны">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">9</span>
           <div class="card-title"><span class="genre">Южная кухня · особняк с концертами</span><h3 class="venue">Тёплые страны</h3></div>
@@ -546,6 +1003,48 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip ok">пт-сб до 01:00</span></div>
         <p class="why">«Саммит южной кухни»: уха и кебабы в особняке с живой музыкой и летней террасой. Мягкий южный уют — вариант неспешного длинного вечера.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">уха</span><span class="dish">кебабы</span></div>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="320" cy="112" r="104" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="320" cy="112" r="72" fill="var(--accent)" fill-opacity="0.11"/>
+  <circle cx="320" cy="112" r="44" fill="var(--accent)" fill-opacity="0.85"/>
+
+  <line x1="60" y1="332" x2="580" y2="332" stroke="var(--line)" stroke-width="2"/>
+  <ellipse cx="72" cy="278" rx="11" ry="50" fill="var(--ink)" fill-opacity="0.45"/>
+  <line x1="72" y1="326" x2="72" y2="332" stroke="var(--ink)" stroke-width="2.5" opacity="0.45"/>
+  <ellipse cx="568" cy="278" rx="11" ry="50" fill="var(--ink)" fill-opacity="0.45"/>
+  <line x1="568" y1="326" x2="568" y2="332" stroke="var(--ink)" stroke-width="2.5" opacity="0.45"/>
+
+  <rect x="98" y="238" width="86" height="94" fill="var(--ink)" fill-opacity="0.6"/>
+  <rect x="456" y="238" width="86" height="94" fill="var(--ink)" fill-opacity="0.6"/>
+  <path d="M118 302v-20a9 9 0 0 1 18 0v20z" fill="var(--accent-soft)" fill-opacity="0.55"/>
+  <path d="M148 302v-20a9 9 0 0 1 18 0v20z" fill="var(--accent-soft)" fill-opacity="0.55"/>
+  <path d="M474 302v-20a9 9 0 0 1 18 0v20z" fill="var(--accent-soft)" fill-opacity="0.55"/>
+  <path d="M504 302v-20a9 9 0 0 1 18 0v20z" fill="var(--accent-soft)" fill-opacity="0.55"/>
+
+  <rect x="184" y="198" width="272" height="134" fill="var(--ink)" fill-opacity="0.85"/>
+  <rect x="176" y="189" width="288" height="9" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M254 189L320 146L386 189Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <circle cx="320" cy="176" r="8" fill="var(--accent-soft)" fill-opacity="0.7"/>
+  <path d="M307 332v-70a13 13 0 0 1 26 0v70z" fill="var(--accent-soft)" fill-opacity="0.8"/>
+  <path d="M201 296v-36a13 13 0 0 1 26 0v36z" fill="var(--accent-soft)" fill-opacity="0.65"/>
+  <path d="M254 296v-36a13 13 0 0 1 26 0v36z" fill="var(--accent-soft)" fill-opacity="0.65"/>
+  <path d="M360 296v-36a13 13 0 0 1 26 0v36z" fill="var(--accent-soft)" fill-opacity="0.65"/>
+  <path d="M413 296v-36a13 13 0 0 1 26 0v36z" fill="var(--accent-soft)" fill-opacity="0.65"/>
+  <rect x="296" y="332" width="48" height="6" fill="var(--ink)" fill-opacity="0.7"/>
+
+  <path d="M0 44C70 62 140 54 208 76C242 87 262 104 274 128" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.8"/>
+  <ellipse cx="72" cy="48" rx="14" ry="8" fill="var(--muted)" fill-opacity="0.6" transform="rotate(-14 72 48)"/>
+  <ellipse cx="148" cy="52" rx="14" ry="8" fill="var(--muted)" fill-opacity="0.6" transform="rotate(6 148 52)"/>
+  <ellipse cx="222" cy="84" rx="14" ry="8" fill="var(--muted)" fill-opacity="0.6" transform="rotate(26 222 84)"/>
+  <ellipse cx="258" cy="112" rx="13" ry="8" fill="var(--muted)" fill-opacity="0.6" transform="rotate(42 258 112)"/>
+  <circle cx="180" cy="98" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <circle cx="193" cy="95" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <circle cx="206" cy="100" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <circle cx="185" cy="110" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <circle cx="198" cy="111" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <circle cx="192" cy="122" r="6" fill="var(--ink)" fill-opacity="0.7"/>
+  <path d="M236 92c11 4 13 14 4 18c-7 3 -11 -3 -6 -8" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.7"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красная, 169/1</b></span><span>пн-чт до 00:00, пт-сб до 01:00</span><span>чек ~1.8 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001066174680" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -553,6 +1052,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="jimmy" data-sec="Ужин" data-name="Джимми Чу">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">10</span>
           <div class="card-title"><span class="genre">Паназиатский гастробар · группа «Мадьяр»</span><h3 class="venue">Джимми Чу</h3></div>
@@ -562,6 +1062,34 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Азиатский рестобар главной ресторанной группы города: утка по-пекински, цветные дим-самы, крисп-суши, вонтоны в коллагеновом бульоне; коктейли на соджу, юдзу и личи.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">утка по-пекински</span><span class="dish">дим-самы</span><span class="dish">крисп-суши</span></div>
         <p class="tip"><b>Знать:</b> цены на азию выше среднего по городу.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="170" cy="112" r="112" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="170" cy="112" r="78" fill="var(--accent)" fill-opacity="0.1"/>
+  <ellipse cx="170" cy="112" rx="54" ry="44" fill="var(--accent)" fill-opacity="0.85"/>
+  <ellipse cx="170" cy="112" rx="36" ry="44" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.3"/>
+  <ellipse cx="170" cy="112" rx="16" ry="44" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.3"/>
+  <rect x="148" y="60" width="44" height="10" rx="3" fill="var(--ink)" fill-opacity="0.85"/>
+  <rect x="151" y="153" width="38" height="9" rx="3" fill="var(--ink)" fill-opacity="0.85"/>
+  <line x1="170" y1="60" x2="170" y2="30" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <line x1="170" y1="162" x2="170" y2="192" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <rect x="164" y="192" width="12" height="22" rx="5" fill="var(--ink)" fill-opacity="0.8"/>
+
+  <path d="M392 264C392 236 404 220 430 220C456 220 468 236 468 264C468 273 455 277 430 277C405 277 392 273 392 264Z" fill="var(--muted)" fill-opacity="0.8"/>
+  <path d="M430 224C419 234 413 247 411 262" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.45"/>
+  <path d="M430 224C425 236 423 249 423 264" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.45"/>
+  <path d="M430 224C435 236 437 249 437 264" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.45"/>
+  <path d="M430 224C441 234 447 247 449 262" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.45"/>
+
+  <line x1="618" y1="56" x2="428" y2="232" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+  <line x1="634" y1="94" x2="444" y2="246" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+
+  <path d="M404 202C390 182 406 166 392 144C382 128 394 116 386 98" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.7" stroke-linecap="round"/>
+  <path d="M448 206C458 188 446 174 454 156" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45" stroke-linecap="round"/>
+
+  <line x1="104" y1="330" x2="560" y2="330" stroke="var(--line)" stroke-width="2"/>
+  <ellipse cx="430" cy="326" rx="48" ry="8" fill="var(--ink)" fill-opacity="0.55"/>
+  <ellipse cx="430" cy="324" rx="20" ry="3" fill="var(--accent)" fill-opacity="0.25"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Дальняя, 8 к1</b></span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001037464303" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -569,6 +1097,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="madyar" data-sec="Ужин" data-name="Мадьяр">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">11</span>
           <div class="card-title"><span class="genre">Европейская и венгерская кухня · сеть</span><h3 class="venue">Мадьяр</h3></div>
@@ -578,6 +1107,39 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Первая гастро-легенда города: с этого ресторана началась крупнейшая ресторанная группа Краснодара. Семейная классика, проверенная двадцатью пятью годами — способ понять, как ест сам Краснодар.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">гуляш</span><span class="dish">венгерская классика</span></div>
         <p class="tip"><b>Знать:</b> точек несколько — выбирай ближайшую по карте.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="320" cy="298" r="120" fill="var(--accent)" fill-opacity="0.07"/>
+  <circle cx="320" cy="298" r="70" fill="var(--accent)" fill-opacity="0.12"/>
+  <line x1="96" y1="340" x2="544" y2="340" stroke="var(--line)" stroke-width="2"/>
+
+  <line x1="320" y1="58" x2="348" y2="336" stroke="var(--ink)" stroke-width="3" opacity="0.4"/>
+  <line x1="320" y1="58" x2="206" y2="336" stroke="var(--ink)" stroke-width="3" opacity="0.9"/>
+  <line x1="320" y1="58" x2="434" y2="336" stroke="var(--ink)" stroke-width="3" opacity="0.9"/>
+  <circle cx="320" cy="54" r="6" fill="var(--ink)" fill-opacity="0.9"/>
+  <circle cx="320" cy="68" r="4.5" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="320" cy="80" r="4.5" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="320" cy="92" r="4.5" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <circle cx="320" cy="104" r="4.5" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+
+  <path d="M258 148C272 106 368 106 382 148" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.9"/>
+  <ellipse cx="320" cy="150" rx="64" ry="11" fill="var(--ink)" fill-opacity="0.9"/>
+  <path d="M256 152C254 194 280 224 320 224C360 224 386 194 384 152Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M296 130C288 112 300 98 292 80" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
+  <path d="M344 132C352 114 340 100 348 82" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+
+  <path d="M320 334C298 308 304 282 320 254C336 282 342 308 320 334Z" fill="var(--accent)" fill-opacity="0.85"/>
+  <path d="M286 334C272 316 276 296 290 278C299 296 301 318 286 334Z" fill="var(--accent)" fill-opacity="0.55"/>
+  <path d="M354 334C368 316 364 296 350 278C341 296 339 318 354 334Z" fill="var(--accent)" fill-opacity="0.55"/>
+  <line x1="258" y1="338" x2="382" y2="328" stroke="var(--muted)" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <line x1="264" y1="328" x2="376" y2="338" stroke="var(--muted)" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+
+  <path d="M540 294q-14 28 0 50q10 16 20 6q8-9-2-26q-10-16-18-30z" fill="var(--accent)" fill-opacity="0.6"/>
+  <path d="M540 294q-2-10 9-11" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.8"/>
+  <path d="M578 300q-8 26 4 44q9 13 17 4q7-8-3-22q-10-15-18-26z" fill="var(--accent)" fill-opacity="0.4"/>
+  <path d="M578 300q-1-9 8-10" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.6"/>
+  <path d="M74 306q-10 24 2 42q8 12 16 4q6-7-3-21q-9-14-15-25z" fill="var(--accent)" fill-opacity="0.3"/>
+  <path d="M74 306q-1-9 8-10" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>сеть · есть зал на 40-летия Победы, 33Г</b></span><span>чек 1–3 тыс ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001083961733" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -585,6 +1147,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="stan" data-sec="Ужин" data-name="Станъ">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">12</span>
           <div class="card-title"><span class="genre">Кубанская и казачья кухня · берег реки</span><h3 class="venue">Станъ</h3></div>
@@ -594,6 +1157,54 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Казачий колорит на берегу Кубани: летние беседки, картины кубанских художников, борщ и вареники в полном антураже. Работает на впечатление — сюда водят гостей города.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">борщ</span><span class="dish">вареники</span></div>
         <p class="tip good"><b>Летом:</b> проси беседку у воды при брони.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="402" cy="84" r="74" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="402" cy="84" r="48" fill="var(--accent)" fill-opacity="0.12"/>
+  <circle cx="402" cy="84" r="28" fill="var(--accent)" fill-opacity="0.9"/>
+  <circle cx="128" cy="64" r="2.5" fill="var(--muted)" fill-opacity="0.5"/>
+  <circle cx="266" cy="42" r="2" fill="var(--muted)" fill-opacity="0.4"/>
+  <circle cx="556" cy="76" r="2.5" fill="var(--muted)" fill-opacity="0.5"/>
+
+  <line x1="336" y1="250" x2="640" y2="250" stroke="var(--muted)" stroke-width="2" opacity="0.4"/>
+  <path d="M0 262C160 254 420 250 640 254L640 360L0 360Z" fill="var(--muted)" fill-opacity="0.12"/>
+  <line x1="472" y1="274" x2="552" y2="274" stroke="var(--line)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <line x1="500" y1="320" x2="604" y2="320" stroke="var(--line)" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+  <line x1="560" y1="262" x2="622" y2="262" stroke="var(--line)" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+
+  <line x1="396" y1="266" x2="410" y2="266" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+  <line x1="390" y1="280" x2="420" y2="280" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+  <line x1="382" y1="296" x2="428" y2="296" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+  <line x1="372" y1="314" x2="438" y2="314" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.42"/>
+  <line x1="360" y1="334" x2="450" y2="334" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+  <line x1="368" y1="352" x2="444" y2="352" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity="0.2"/>
+
+  <path d="M0 258C96 250 200 254 292 266C322 270 338 284 346 304C354 322 356 342 352 360L0 360Z" fill="var(--ink)" fill-opacity="0.8"/>
+  <path d="M74 174L162 116L250 174Z" fill="var(--ink)" fill-opacity="0.9"/>
+  <line x1="162" y1="116" x2="162" y2="98" stroke="var(--ink)" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="162" cy="94" r="4" fill="var(--ink)" fill-opacity="0.9"/>
+  <rect x="82" y="172" width="172" height="8" fill="var(--ink)" fill-opacity="0.9"/>
+  <path d="M98 180V258M147 180V258M196 180V258M245 180V258" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.9"/>
+  <line x1="98" y1="220" x2="245" y2="220" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <line x1="98" y1="240" x2="245" y2="240" stroke="var(--ink)" stroke-width="2.5" opacity="0.6"/>
+  <rect x="86" y="256" width="172" height="8" fill="var(--ink)" fill-opacity="0.9"/>
+
+  <path d="M618 356C616 296 620 246 624 204" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.4"/>
+  <rect x="619" y="176" width="10" height="30" rx="5" fill="var(--ink)" fill-opacity="0.4"/>
+  <line x1="624" y1="176" x2="624" y2="156" stroke="var(--ink)" stroke-width="2" opacity="0.4"/>
+  <path d="M552 356C550 310 548 268 552 232" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.35"/>
+  <rect x="547" y="204" width="10" height="28" rx="5" fill="var(--ink)" fill-opacity="0.35"/>
+  <path d="M566 356C562 300 560 240 566 188" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.9"/>
+  <rect x="560" y="158" width="11" height="34" rx="5" fill="var(--ink)" fill-opacity="0.9"/>
+  <line x1="566" y1="158" x2="566" y2="136" stroke="var(--ink)" stroke-width="2.5" opacity="0.9"/>
+  <path d="M598 358C596 312 592 262 596 214" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.85"/>
+  <rect x="591" y="186" width="10" height="30" rx="5" fill="var(--ink)" fill-opacity="0.85"/>
+  <line x1="596" y1="186" x2="596" y2="166" stroke="var(--ink)" stroke-width="2.5" opacity="0.85"/>
+  <path d="M534 358C532 318 534 280 538 244" fill="none" stroke="var(--ink)" stroke-width="3" opacity="0.8"/>
+  <rect x="533" y="218" width="10" height="28" rx="5" fill="var(--ink)" fill-opacity="0.8"/>
+  <line x1="538" y1="218" x2="538" y2="200" stroke="var(--ink)" stroke-width="2" opacity="0.8"/>
+  <path d="M560 344C540 304 536 264 548 228" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.6"/>
+  <path d="M604 348C620 304 624 268 614 232" fill="none" stroke="var(--ink)" stroke-width="2.5" opacity="0.5"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Кубанская набережная</b></span><span>чек ~1.5 тыс ₽</span></div>
           <div class="actions"><button class="pick" type="button">В план</button></div>
@@ -601,6 +1212,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="arhitektor" data-sec="Ужин" data-name="Архитектор">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">13</span>
           <div class="card-title"><span class="genre">Ресторан-бар-клуб · весь вечер в одном месте</span><h3 class="venue">Архитектор</h3></div>
@@ -609,6 +1221,30 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat</span></div>
         <p class="why">Формат «пришёл на ужин — остался до ночи»: кухня в авторской подаче, коктейльный бар, дальше вечеринки с живой музыкой и диджеями. Красивое необычное пространство на Красной.</p>
         <p class="tip"><b>Знать:</b> отзывы о сервисе неровные — коктейли и атмосферу хвалят стабильнее кухни.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M64 0V360M128 0V360M192 0V360M256 0V360M320 0V360M384 0V360M448 0V360M512 0V360M576 0V360" fill="none" stroke="var(--line)" stroke-width="1" opacity="0.28"/>
+  <path d="M0 60H640M0 120H640M0 180H640M0 240H640M0 300H640" fill="none" stroke="var(--line)" stroke-width="1" opacity="0.2"/>
+  <circle cx="210" cy="205" r="150" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="2 8" opacity="0.35"/>
+  <path d="M56 72V330" fill="none" stroke="var(--line)" stroke-width="2" stroke-dasharray="5 6" opacity="0.5"/>
+  <path d="M48 72H64M48 330H64" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.5"/>
+  <path d="M74 144L210 72L346 144Z" fill="var(--ink)" fill-opacity="0.1" stroke="var(--muted)" stroke-width="2.5" stroke-opacity="0.8"/>
+  <path d="M92 164H348" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.6"/>
+  <path d="M116 166V316M168 166V316M220 166V316M272 166V316M324 166V316" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+  <path d="M84 316H356" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.7"/>
+  <path d="M70 330H370" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45"/>
+  <path d="M432 72L384 258M432 72L474 252" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85" stroke-linecap="round"/>
+  <circle cx="432" cy="60" r="9" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85"/>
+  <path d="M432 51V38" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85" stroke-linecap="round"/>
+  <path d="M384 258L379 275M474 252L478 268" fill="none" stroke="var(--ink)" stroke-width="2" stroke-opacity="0.7" stroke-linecap="round"/>
+  <path d="M352 296A180 90 0 0 1 520 262" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="1 8" stroke-linecap="round" opacity="0.6"/>
+  <path d="M512 160L608 160L560 218Z" fill="var(--accent-soft)" fill-opacity="0.5"/>
+  <path d="M498 148L622 148L560 224Z" fill="var(--surface2)" fill-opacity="0.3" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85" stroke-linejoin="round"/>
+  <circle cx="560" cy="194" r="20" fill="var(--accent-soft)" fill-opacity="0.35"/>
+  <path d="M560 193L584 150" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.7"/>
+  <circle cx="560" cy="194" r="9" fill="var(--accent)" fill-opacity="0.9"/>
+  <path d="M560 224V292" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85"/>
+  <path d="M522 296Q560 306 598 296" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85" stroke-linecap="round"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красная, 118</b></span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001035379928" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -616,6 +1252,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="nahlebnik" data-sec="Ужин" data-name="Нахлебник">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">14</span>
           <div class="card-title"><span class="genre">Бургер-бар · быстрый и дешёвый слот</span><h3 class="venue">Нахлебник</h3></div>
@@ -625,6 +1262,18 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Единственный ₽-формат, который инспекторы Ultima сочли достойным гида: «Гоги» с бараниной, «Бруклин» с беконом. Когда нужен сытный перекус без церемоний.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">бургер «Гоги» с бараниной</span><span class="dish">«Бруклин» с беконом</span></div>
         <p class="tip"><b>Знать:</b> оценки на картах средние — это история про бургеры и скорость, не про сервис.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="320" cy="165" r="152" fill="var(--accent-soft)" fill-opacity="0.12"/>
+  <path d="M285 46C272 30 292 16 282 2M330 40C322 24 340 12 332 -2" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity="0.45"/>
+  <rect x="192" y="224" width="256" height="30" rx="14" fill="var(--ink)" fill-opacity="0.6"/>
+  <rect x="184" y="186" width="272" height="36" rx="17" fill="var(--ink)" fill-opacity="0.88"/>
+  <path d="M105 336L138 224L190 258L216 240L242 262L320 270L398 262L424 240L450 258L502 224L535 336Z" fill="var(--surface2)" fill-opacity="0.8" stroke="var(--line)" stroke-width="2" stroke-opacity="0.6" stroke-linejoin="round"/>
+  <path d="M138 224L176 336M502 224L464 336" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.4"/>
+  <path d="M180 150L460 150L460 178C446 184 436 184 428 182L428 206Q420 218 412 206L412 182C388 188 362 188 344 184L344 212Q336 226 328 212L328 184C296 189 268 189 248 184L248 200Q240 212 232 200L232 182C212 186 196 185 180 179Z" fill="var(--accent)" fill-opacity="0.85"/>
+  <path d="M176 150Q197 178 218 150Q239 178 260 150Q281 178 302 150Q323 178 344 150Q365 178 386 150Q407 178 428 150Q446 176 464 150Z" fill="var(--muted)" fill-opacity="0.6"/>
+  <path d="M172 150C172 76 240 52 320 52C400 52 468 76 468 150Z" fill="var(--ink)" fill-opacity="0.82"/>
+  <path d="M48 338H592" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.35"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Рашпилевская, 106а</b></span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001022096138" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -632,6 +1281,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="cafekrd" data-sec="Ужин" data-name="Cafe Krasnodar">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">15</span>
           <div class="card-title"><span class="genre">Авторская кухня · парк Галицкого</span><h3 class="venue">Cafe Krasnodar</h3></div>
@@ -640,6 +1290,35 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip award">Ultima Guide</span><span class="chip award">лонг-лист WhereToEat 2026</span><span class="chip ok">трансфер по парку</span></div>
         <p class="why">Вариант «поужинать в парке» без гастрономических амбиций Ryotei: спокойно, красиво, рядом стадион и вечерняя прогулка.</p>
         <p class="tip good"><b>Лайфхак:</b> с 17:00 до полуночи работает бесплатный трансфер — предупреди при брони и позвони за 5–10 минут до приезда, машина заберёт от входа в парк и довезёт до дверей.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="90" cy="50" r="2" fill="var(--muted)" fill-opacity="0.55"/>
+  <circle cx="150" cy="84" r="1.5" fill="var(--muted)" fill-opacity="0.5"/>
+  <circle cx="60" cy="120" r="1.5" fill="var(--muted)" fill-opacity="0.45"/>
+  <circle cx="430" cy="44" r="1.5" fill="var(--muted)" fill-opacity="0.5"/>
+  <circle cx="600" cy="60" r="2" fill="var(--muted)" fill-opacity="0.55"/>
+  <path d="M30 252A200 62 0 0 1 430 252" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.3"/>
+  <path d="M70 252A160 48 0 0 1 390 252" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45"/>
+  <path d="M112 252A118 35 0 0 1 348 252" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.6"/>
+  <path d="M156 252A74 22 0 0 1 304 252" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.75"/>
+  <ellipse cx="230" cy="252" rx="34" ry="8" fill="var(--ink)" fill-opacity="0.5"/>
+  <circle cx="77" cy="212" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="383" cy="212" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="91" cy="228" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="175" cy="207" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="285" cy="207" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="369" cy="228" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="147" cy="227" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="230" cy="217" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <circle cx="313" cy="227" r="3.5" fill="var(--accent)" fill-opacity="0.85"/>
+  <path d="M448 252Q520 228 600 252Z" fill="var(--ink)" fill-opacity="0.35"/>
+  <path d="M521 246C519 220 523 196 520 168" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.8" stroke-linecap="round"/>
+  <circle cx="518" cy="126" r="50" fill="var(--ink)" fill-opacity="0.8"/>
+  <path d="M0 252H640" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.5"/>
+  <path d="M40 272H200M240 268H360M420 266H520" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+  <path d="M60 296H150M300 292H430M480 300H620M140 318H260M380 322H480" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.22" stroke-linecap="round"/>
+  <path d="M91 262V272M175 260V268M285 260V268M369 262V272M230 258V270" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+  <path d="M518 258C516 276 522 292 518 308" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.25" stroke-linecap="round"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Разведчика Леонова, 4</b></span><span>09:00–00:00</span><span>+7 918 230-07-02</span></div>
           <div class="actions"><a class="link" href="https://cafekrasnodar.ru" target="_blank" rel="noopener">сайт ↗</a><button class="pick" type="button">В план</button></div>
@@ -651,12 +1330,14 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 
 <!-- ================= BARS ================= -->
 <section id="bars">
+  <span class="ghost" aria-hidden="true">20:00</span>
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">02</span><h2>Бары</h2><span class="sec-time">с 20:00</span></div>
     <p class="sec-sub">Топ подтверждён национальной премией Where2Drink-2026. Почти всё стоит в одном квартале Красноармейской / Карасунской — вечер собирается пешком, без такси.</p>
 
     <div class="cards">
       <article class="card" data-id="detektiv" data-sec="Бары" data-name="Детектив, где вы?">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Спикизи · авторские коктейли</span><h3 class="venue">Детектив, где вы?</h3></div>
@@ -666,6 +1347,24 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Единственный бар города в топ-54 страны. Джаз, приглушённый свет, коктейли-ребусы, izakaya room с азиатскими миксами, винная карта «Север / Юг».</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">авторский сет</span><span class="dish">izakaya-миксы</span><span class="dish">место за стойкой</span></div>
         <p class="tip"><b>Знать:</b> ~30 посадок — в пятницу-субботу без брони почти нереально. Коктейли по умолчанию крепкие: хочешь мягче — скажи бармену сразу.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M410 92L470 68L470 332L410 310Z" fill="var(--accent-soft)" fill-opacity="0.35"/>
+  <path d="M410 310L444 320L520 360L296 360Z" fill="var(--accent)" fill-opacity="0.14"/>
+  <rect x="340" y="70" width="112" height="260" fill="none" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.8"/>
+  <path d="M350 82L412 96L412 306L350 318Z" fill="var(--ink)" fill-opacity="0.7" stroke="var(--line)" stroke-width="2" stroke-opacity="0.4" stroke-linejoin="round"/>
+  <path d="M362 106L400 114L400 196L362 192Z M362 212L400 218L400 290L362 296Z" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.3"/>
+  <circle cx="400" cy="206" r="4.5" fill="var(--muted)" fill-opacity="0.8"/>
+  <path d="M412 96L442 84L442 316L412 306Z" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="252" cy="182" r="104" fill="var(--surface2)" fill-opacity="0.18" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85"/>
+  <circle cx="252" cy="182" r="92" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.45"/>
+  <path d="M186 144A76 76 0 0 1 226 111" fill="none" stroke="var(--line)" stroke-width="2.5" opacity="0.6" stroke-linecap="round"/>
+  <path d="M180 256L104 334" fill="none" stroke="var(--ink)" stroke-width="16" stroke-opacity="0.85" stroke-linecap="round"/>
+  <path d="M486 240C462 214 502 194 482 168C468 148 500 134 486 108" fill="none" stroke="var(--muted)" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
+  <path d="M512 232C500 216 522 204 512 186" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.35" stroke-linecap="round"/>
+  <ellipse cx="556" cy="300" rx="64" ry="14" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M514 302C512 258 526 244 556 244C586 244 600 258 598 302Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M515 286Q556 302 597 286L597 298Q556 312 515 298Z" fill="var(--muted)" fill-opacity="0.7"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красноармейская, 45 · арка, розовая дверь, 2 этаж</b></span><span>17:00–02:00</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001035829041" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -673,6 +1372,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="birulki" data-sec="Бары" data-name="Бирюльки">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Хоровод-бар · настойки и славянская тьма</span><h3 class="venue">Бирюльки</h3></div>
@@ -682,6 +1382,31 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Тёмная сторона славянских сказок: коктейли только на русском продукте — локальные травы, ягоды, настойки. Подача — отдельное шоу. Две минуты пешком от «Детектива».</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">настойка «гречка с молоком»</span><span class="dish">«Игла Кощея»</span><span class="dish">сет настоек</span></div>
         <p class="tip"><b>Знать:</b> всего ~25 мест — в выходные лучше бронировать заранее.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="60" cy="60" r="2" fill="var(--muted)" fill-opacity="0.55"/>
+  <circle cx="120" cy="36" r="1.5" fill="var(--muted)" fill-opacity="0.5"/>
+  <circle cx="200" cy="70" r="1.5" fill="var(--muted)" fill-opacity="0.45"/>
+  <circle cx="420" cy="40" r="1.5" fill="var(--muted)" fill-opacity="0.5"/>
+  <circle cx="600" cy="88" r="2" fill="var(--muted)" fill-opacity="0.55"/>
+  <path d="M496 30A32 32 0 1 0 496 94A40 40 0 0 1 496 30Z" fill="var(--accent)" fill-opacity="0.9"/>
+  <path d="M0 318L0 250L22 150L48 262L76 120L110 266L140 168L172 268L204 100L244 268L272 160L304 268L338 126L372 268L402 172L432 268L464 112L502 268L530 162L560 268L592 134L622 268L640 244L640 318Z" fill="var(--ink)" fill-opacity="0.25"/>
+  <path d="M-24 330L42 128L108 330Z M64 330L122 186L180 330Z M462 330L524 148L586 330Z M556 330L612 196L668 330Z" fill="var(--ink)" fill-opacity="0.55"/>
+  <path d="M289 210L302 302L338 302L351 210Z" fill="var(--accent-soft)" fill-opacity="0.5"/>
+  <path d="M282 162L302 302L338 302L358 162" fill="var(--surface2)" fill-opacity="0.2" stroke="var(--ink)" stroke-width="3" stroke-opacity="0.85" stroke-linejoin="round"/>
+  <ellipse cx="320" cy="162" rx="38" ry="8" fill="none" stroke="var(--ink)" stroke-width="2" stroke-opacity="0.8"/>
+  <ellipse cx="320" cy="210" rx="31" ry="6" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.7"/>
+  <path d="M320 296C317 268 322 244 318 220" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.7" stroke-linecap="round"/>
+  <path d="M318 232L305 222M319 246L333 236M318 262L304 252M319 276L334 268" fill="none" stroke="var(--ink)" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+  <path d="M0 332H640M0 354H640" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.5"/>
+  <path d="M20 343L32 334L44 343L32 352Z M68 343L80 334L92 343L80 352Z M116 343L128 334L140 343L128 352Z M164 343L176 334L188 343L176 352Z M212 343L224 334L236 343L224 352Z M260 343L272 334L284 343L272 352Z M308 343L320 334L332 343L320 352Z M356 343L368 334L380 343L368 352Z M404 343L416 334L428 343L416 352Z M452 343L464 334L476 343L464 352Z M500 343L512 334L524 343L512 352Z M548 343L560 334L572 343L560 352Z M596 343L608 334L620 343L608 352Z" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.7" stroke-linejoin="round"/>
+  <circle cx="32" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="128" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="224" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="320" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="416" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="512" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+  <circle cx="608" cy="343" r="2.5" fill="var(--accent)" fill-opacity="0.8"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Карасунская, 81</b></span><span>будни до 01:00, пт-сб до 03:00</span><span>коктейли 500–700 ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001093354871" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -689,6 +1414,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="videosalon" data-sec="Бары" data-name="Видеосалон закрыт">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">3</span>
           <div class="card-title"><span class="genre">Коктейли и танцпол · эстетика 80–90-х</span><h3 class="venue">Видеосалон закрыт</h3></div>
@@ -697,6 +1423,29 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip ok">главный танцующий бар центра</span></div>
         <p class="why">Мир видеосалонов и поп-культуры: шумно, весело, много людей. Идеальная вторая точка после медленного «Детектива» — заходить к 22:00–23:00, когда раскачивается.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">«Чужой»</span><span class="dish">«Добби свободен»</span><span class="dish">«Футурама»</span></div>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M0 36H640" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.18"/>
+  <path d="M0 336H240" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.18"/>
+  <rect x="104" y="86" width="368" height="182" rx="12" fill="var(--ink)" fill-opacity="0.85"/>
+  <rect x="104" y="86" width="368" height="182" rx="12" fill="none" stroke="var(--line)" stroke-width="2" opacity="0.35"/>
+  <rect x="146" y="124" width="284" height="92" rx="8" fill="var(--surface2)" fill-opacity="0.22" stroke="var(--line)" stroke-width="2" stroke-opacity="0.4"/>
+  <circle cx="206" cy="170" r="32" fill="none" stroke="var(--muted)" stroke-width="3" opacity="0.8"/>
+  <circle cx="206" cy="170" r="22" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.4"/>
+  <circle cx="206" cy="170" r="11" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.8"/>
+  <circle cx="370" cy="170" r="32" fill="none" stroke="var(--muted)" stroke-width="3" opacity="0.8"/>
+  <circle cx="370" cy="170" r="11" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.8"/>
+  <path d="M234 192Q288 202 342 192" fill="none" stroke="var(--muted)" stroke-width="2" opacity="0.5"/>
+  <rect x="146" y="230" width="284" height="26" rx="4" fill="var(--muted)" fill-opacity="0.3"/>
+  <rect x="146" y="230" width="284" height="7" fill="var(--accent)" fill-opacity="0.55"/>
+  <path d="M402 268C424 330 508 342 550 302C588 266 560 214 518 230C482 244 494 296 556 312C600 322 628 310 648 292" fill="none" stroke="var(--ink)" stroke-width="9" stroke-opacity="0.5" stroke-linecap="round"/>
+  <path d="M402 262C426 322 506 334 546 296" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+  <rect x="496" y="112" width="144" height="6" fill="var(--accent)" fill-opacity="0.8"/>
+  <rect x="476" y="132" width="164" height="3" fill="var(--accent)" fill-opacity="0.45"/>
+  <rect x="520" y="96" width="120" height="4" fill="var(--accent)" fill-opacity="0.3"/>
+  <rect x="440" y="204" width="200" height="5" fill="var(--accent)" fill-opacity="0.55"/>
+  <rect x="0" y="206" width="84" height="5" fill="var(--accent)" fill-opacity="0.6"/>
+  <rect x="0" y="224" width="56" height="3" fill="var(--accent)" fill-opacity="0.35"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красноармейская, 64</b></span><span>вс-чт до 01:00, пт-сб до 03:00</span><span>коктейли 600–700 ₽</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001032620626" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -704,6 +1453,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="rail" data-sec="Бары" data-name="Rail bottle shop">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">4</span>
           <div class="card-title"><span class="genre">Крафт, сидры, миды · старый центр</span><h3 class="venue">Rail bottle shop</h3></div>
@@ -713,6 +1463,55 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Лучший пивной формат города: краны местной пивоварни, холодильник с редкими бутылками, новинки раньше всех. Трамваи под окнами задают атмосферу.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">крафт-ротация с кранов</span><span class="dish">сидры</span><span class="dish">миды</span></div>
         <p class="tip"><b>Знать:</b> к уличным столикам подходят колоритные прохожие — если напрягает, садись внутрь.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <g stroke="var(--line)" stroke-width="2" fill="none" opacity="0.45">
+    <path d="M420,86 H544"/>
+    <path d="M470,118 L448,90"/>
+    <path d="M470,118 L494,90"/>
+  </g>
+  <rect x="366" y="118" width="300" height="90" rx="14" fill="var(--muted)" fill-opacity="0.22"/>
+  <g fill="var(--accent)" fill-opacity="0.28">
+    <rect x="388" y="136" width="44" height="34" rx="4"/>
+    <rect x="444" y="136" width="44" height="34" rx="4"/>
+    <rect x="500" y="136" width="44" height="34" rx="4"/>
+    <rect x="556" y="136" width="44" height="34" rx="4"/>
+  </g>
+  <line x1="0" y1="208" x2="640" y2="208" stroke="var(--line)" stroke-width="2" opacity="0.5"/>
+  <g stroke="var(--ink)" stroke-width="3" opacity="0.55" fill="none">
+    <path d="M120,360 L432,214"/>
+    <path d="M330,360 L452,214"/>
+  </g>
+  <g stroke="var(--line)" stroke-width="2" opacity="0.4">
+    <line x1="132" y1="350" x2="348" y2="350"/>
+    <line x1="180" y1="328" x2="365" y2="328"/>
+    <line x1="237" y1="302" x2="386" y2="302"/>
+    <line x1="295" y1="275" x2="408" y2="275"/>
+    <line x1="350" y1="249" x2="430" y2="249"/>
+  </g>
+  <g stroke="var(--muted)" stroke-width="2.5" fill="none" opacity="0.85">
+    <path d="M545,40 C545,32 542,26 536,22"/>
+    <path d="M545,40 C568,46 579,68 575,92 C572,112 561,123 545,128 C529,123 518,112 515,92 C511,68 522,46 545,40 Z" fill="var(--muted)" fill-opacity="0.12"/>
+    <path d="M524,66 Q545,80 566,66" stroke-width="2"/>
+    <path d="M520,90 Q545,104 570,90" stroke-width="2"/>
+    <path d="M528,110 Q545,121 562,110" stroke-width="2"/>
+  </g>
+  <g fill="var(--ink)" fill-opacity="0.85">
+    <circle cx="122" cy="80" r="11"/>
+    <rect x="114" y="86" width="16" height="66" rx="8"/>
+    <rect x="96" y="150" width="54" height="210" rx="10"/>
+    <rect x="148" y="166" width="52" height="16" rx="5"/>
+    <rect x="182" y="178" width="14" height="20"/>
+  </g>
+  <rect x="181" y="198" width="16" height="68" fill="var(--accent)" fill-opacity="0.15"/>
+  <rect x="185" y="198" width="8" height="68" fill="var(--accent)" fill-opacity="0.8"/>
+  <path d="M167,274 L172,336 H204 L209,274 Z" fill="var(--accent)" fill-opacity="0.6"/>
+  <path d="M162,258 L169,340 H207 L214,258" stroke="var(--ink)" stroke-width="2.5" fill="none"/>
+  <g fill="var(--ink)" fill-opacity="0.18" stroke="var(--ink)" stroke-width="2">
+    <circle cx="176" cy="256" r="9"/>
+    <circle cx="188" cy="248" r="11"/>
+    <circle cx="201" cy="256" r="9"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Горького, 117</b></span><span>чек ~600 ₽</span><span>30 мест + веранда</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001045297182" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -720,6 +1519,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="vinchik" data-sec="Бары" data-name="Хлеб да Винчик">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">5</span>
           <div class="card-title"><span class="genre">Вино и сыр · тихий формат</span><h3 class="venue">Хлеб да Винчик</h3></div>
@@ -729,6 +1529,30 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Камерная альтернатива коктейльному маршруту: сеты российских вин на дегустацию, сыр выбираешь сам из витрины. Можно разговаривать без крика.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">дегустационный сет вин</span><span class="dish">сыр из витрины</span><span class="dish">фондю</span></div>
         <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся — глянь карточку 2ГИС перед выходом.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <line x1="40" y1="300" x2="600" y2="300" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
+  <path d="M70,300 L200,300 L200,232 Z" fill="var(--muted)" fill-opacity="0.28" stroke="var(--muted)" stroke-width="2.5"/>
+  <g stroke="var(--muted)" stroke-width="2" fill="none" opacity="0.8">
+    <circle cx="170" cy="278" r="9"/>
+    <circle cx="146" cy="289" r="5.5"/>
+    <circle cx="183" cy="256" r="5"/>
+  </g>
+  <path d="M436,296 C470,300 560,262 604,224 C612,217 610,206 600,208 C550,214 470,258 432,282 C424,288 426,294 436,296 Z" fill="var(--muted)" fill-opacity="0.28" stroke="var(--muted)" stroke-width="2.5"/>
+  <g stroke="var(--muted)" stroke-width="2" opacity="0.8">
+    <path d="M488,266 L500,280"/>
+    <path d="M523,250 L535,264"/>
+    <path d="M558,234 L570,248"/>
+  </g>
+  <ellipse cx="320" cy="170" rx="42" ry="12" fill="var(--accent)" fill-opacity="0.12"/>
+  <path d="M291,168 C294,198 306,212 320,215 C334,212 346,198 349,168 Z" fill="var(--accent)" fill-opacity="0.75"/>
+  <path d="M288,140 C288,192 302,214 320,218 C338,214 352,192 352,140" stroke="var(--ink)" stroke-width="2.5" fill="none"/>
+  <path d="M320,218 V288 M296,297 Q320,285 344,297 M294,299 H346" stroke="var(--ink)" stroke-width="2.5" fill="none"/>
+  <circle cx="396" cy="232" r="26" fill="var(--accent)" fill-opacity="0.07"/>
+  <circle cx="396" cy="232" r="14" fill="var(--accent)" fill-opacity="0.15"/>
+  <path d="M396,220 C403,229 405,238 396,245 C387,238 389,229 396,220 Z" fill="var(--accent)" fill-opacity="0.9"/>
+  <path d="M396,252 V245" stroke="var(--ink)" stroke-width="2" opacity="0.7"/>
+  <rect x="386" y="252" width="20" height="48" rx="3" fill="var(--ink)" fill-opacity="0.25" stroke="var(--ink)" stroke-width="2"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Мира, 40 · напротив Hilton</b></span></div>
           <div class="actions"><button class="pick" type="button">В план</button></div>
@@ -736,6 +1560,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="vodkin" data-sec="Бары" data-name="Petrov Vodkin">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">6</span>
           <div class="card-title"><span class="genre">Настойки · уличный движ</span><h3 class="venue">Petrov Vodkin</h3></div>
@@ -744,6 +1569,38 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <p class="why">Противоположный «Детективу» полюс: тесно, живо, народ вываливается на улицу. Авторские настойки собственного производства, еда простая — бургеры и фри.</p>
         <div class="order-row"><span class="lbl">Брать</span><span class="dish">настойки</span><span class="dish">бургер</span></div>
         <p class="tip"><b>Источник:</b> из ресёрча Opus, лично не перепроверялся.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M0,44 Q160,128 320,70 Q480,16 640,72" stroke="var(--line)" stroke-width="2" fill="none" opacity="0.55"/>
+  <g stroke="var(--line)" stroke-width="2" opacity="0.55">
+    <path d="M80,77 v10"/><path d="M160,92 v10"/><path d="M240,90 v10"/>
+    <path d="M320,70 v10"/><path d="M400,50 v10"/><path d="M480,43 v10"/><path d="M560,51 v10"/>
+  </g>
+  <g fill="var(--accent)" fill-opacity="0.12">
+    <circle cx="80" cy="93" r="13"/><circle cx="160" cy="108" r="13"/><circle cx="240" cy="106" r="13"/>
+    <circle cx="320" cy="86" r="13"/><circle cx="400" cy="66" r="13"/><circle cx="480" cy="59" r="13"/><circle cx="560" cy="67" r="13"/>
+  </g>
+  <g fill="var(--accent)" fill-opacity="0.85">
+    <circle cx="80" cy="93" r="5"/><circle cx="160" cy="108" r="5"/><circle cx="240" cy="106" r="5"/>
+    <circle cx="320" cy="86" r="5"/><circle cx="400" cy="66" r="5"/><circle cx="480" cy="59" r="5"/><circle cx="560" cy="67" r="5"/>
+  </g>
+  <line x1="60" y1="308" x2="600" y2="308" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
+  <rect x="202" y="130" width="36" height="16" rx="5" fill="var(--ink)" fill-opacity="0.85"/>
+  <rect x="208" y="146" width="24" height="42" fill="var(--ink)" fill-opacity="0.12" stroke="var(--ink)" stroke-width="2.5"/>
+  <rect x="186" y="240" width="68" height="64" fill="var(--accent)" fill-opacity="0.25"/>
+  <path d="M190,186 L250,186 L258,206 L258,308 L182,308 L182,206 Z" fill="var(--ink)" fill-opacity="0.1" stroke="var(--ink)" stroke-width="2.5"/>
+  <g stroke="var(--ink)" stroke-width="2" opacity="0.3">
+    <path d="M206,192 V306"/><path d="M234,192 V306"/>
+  </g>
+  <path d="M304,266 L310,302 H330 L336,266 Z" fill="var(--accent)" fill-opacity="0.4"/>
+  <path d="M298,252 L306,306 H334 L342,252 Z" fill="var(--ink)" fill-opacity="0.1" stroke="var(--ink)" stroke-width="2.5"/>
+  <path d="M374,266 L380,302 H400 L406,266 Z" fill="var(--accent)" fill-opacity="0.4"/>
+  <path d="M368,252 L376,306 H404 L412,252 Z" fill="var(--ink)" fill-opacity="0.1" stroke="var(--ink)" stroke-width="2.5"/>
+  <path d="M444,266 L450,302 H470 L476,266 Z" fill="var(--accent)" fill-opacity="0.4"/>
+  <path d="M438,252 L446,306 H474 L482,252 Z" fill="var(--ink)" fill-opacity="0.1" stroke="var(--ink)" stroke-width="2.5"/>
+  <g stroke="var(--ink)" stroke-width="2" opacity="0.25">
+    <path d="M320,258 V300"/><path d="M390,258 V300"/><path d="M460,258 V300"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Чапаева, 85</b></span><span>ежедневно до 02:00</span></div>
           <div class="actions"><button class="pick" type="button">В план</button></div>
@@ -754,10 +1611,10 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
     <div class="route" role="note">
       <div class="route-label">Готовый маршрут субботы · всё пешком</div>
       <div class="route-steps">
-        <span class="rstep"><span class="t">20:00</span><span class="n">Детектив, где вы?</span><span class="arr">→</span></span>
-        <span class="rstep"><span class="t">22:00</span><span class="n">Видеосалон закрыт</span><span class="arr">→</span></span>
-        <span class="rstep"><span class="t">00:00</span><span class="n">Бирюльки</span><span class="arr">→</span></span>
-        <span class="rstep"><span class="t">01:30</span><span class="n">Mr. Drunke до 05:00</span></span>
+        <span class="rstep"><span class="dot"></span><span class="t">20:00</span><span class="n">Детектив, где вы?</span><span class="seg"></span></span>
+        <span class="rstep"><span class="dot"></span><span class="t">22:00</span><span class="n">Видеосалон закрыт</span><span class="seg"></span></span>
+        <span class="rstep"><span class="dot"></span><span class="t">00:00</span><span class="n">Бирюльки</span><span class="seg"></span></span>
+        <span class="rstep"><span class="dot"></span><span class="t">01:30</span><span class="n">Mr. Drunke до 05:00</span></span>
       </div>
     </div>
   </div>
@@ -765,6 +1622,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 
 <!-- ================= NIGHT ================= -->
 <section id="night">
+  <span class="ghost" aria-hidden="true">23:00</span>
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">03</span><h2>Ночь</h2><span class="sec-time">после 23:00</span></div>
     <p class="sec-sub">Честный расклад: стационарной клубной сцены федерального уровня в городе нет — легенды (ХОХО, Digger, Теплица) закрылись. Город танцует в бар-клубах, андеграунд живёт разовыми ивентами: следи за афишами qtickets и rupor.events.</p>
@@ -773,6 +1631,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       <span class="tonight-tag">Только сегодня · сб 15.08</span>
       <div class="cards">
         <article class="card" data-id="kroll" data-sec="Ночь" data-name="Чёрный Кролл · Birthday Trip MORELLY">
+        <div class="card-grid"><div class="card-body">
           <header class="card-head">
             <span class="rank">A</span>
             <div class="card-title"><span class="genre">Deep / melodic house · новый клуб</span><h3 class="venue">Чёрный Кролл</h3></div>
@@ -781,13 +1640,26 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
           <div class="chips"><span class="chip award">ANTURAGE + MORELLY</span><span class="chip plain">21+</span></div>
           <p class="why">Birthday Trip резидента MORELLY: гость ANTURAGE и ещё десяток диджеев. Большой танцпол, чёрный бархат и зеркала — самый взрослый электронный вариант на сегодня.</p>
           <p class="tip"><b>Знать:</b> клуб открылся недавно, оценок единицы — музыка обещает больше, чем предсказуем сервис. Приезжать к 23:30.</p>
-          <footer class="meta-row">
+          </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <polygon points="20,-20 64,-20 336,360 252,360" fill="var(--accent)" fill-opacity="0.13"/>
+  <polygon points="576,-20 620,-20 388,360 304,360" fill="var(--accent)" fill-opacity="0.13"/>
+  <ellipse cx="320" cy="352" rx="170" ry="14" fill="var(--accent)" fill-opacity="0.1"/>
+  <path d="M226,360 C234,312 256,282 292,270 C274,258 264,238 266,214 C252,196 240,140 246,84 C249,58 258,44 268,48 C280,54 288,104 290,156 C291,176 296,192 302,200 C312,194 328,194 338,200 C344,192 349,176 350,156 C352,104 360,54 372,48 C382,44 391,58 394,84 C400,140 388,196 374,214 C376,238 366,258 348,270 C384,282 406,312 414,360 Z" fill="var(--ink)" fill-opacity="0.9"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(140,110)" fill="var(--accent)" fill-opacity="0.85"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(505,140)" fill="var(--accent)" fill-opacity="0.85"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(452,58) scale(0.7)" fill="var(--line)" fill-opacity="0.6"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(120,244) scale(0.6)" fill="var(--line)" fill-opacity="0.5"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(556,252) scale(0.75)" fill="var(--line)" fill-opacity="0.55"/>
+  <path d="M0,-12 Q2.5,-2.5 12,0 Q2.5,2.5 0,12 Q-2.5,2.5 -12,0 Q-2.5,-2.5 0,-12 Z" transform="translate(224,66) scale(0.5)" fill="var(--accent)" fill-opacity="0.6"/>
+</svg></div></div>
+        <footer class="meta-row">
             <div class="meta"><span><b>Зиповская, 5 лит. Б</b></span><span>с 22:00 до ~05:00</span><span>столы: +7 918 111-71-70</span></div>
             <div class="actions"><a class="link" href="https://krasnodar.qtickets.events/249205-birthday-trip-morelly" target="_blank" rel="noopener">билеты ↗</a><a class="link" href="https://2gis.ru/krasnodar/firm/70000001114968792" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
           </footer>
         </article>
 
         <article class="card" data-id="vpiska" data-sec="Ночь" data-name="VPISKA · BPM Fest afterparty">
+        <div class="card-grid"><div class="card-body">
           <header class="card-head">
             <span class="rank">B</span>
             <div class="card-title"><span class="genre">Рэп · афтепати BPM Fest</span><h3 class="venue">VPISKA</h3></div>
@@ -796,13 +1668,44 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
           <div class="chips"><span class="chip award">Thrill Pill</span><span class="chip plain">18+</span></div>
           <p class="why">Официальное продолжение рэп-фестиваля: самый плотный и самый молодой поток ночи. Тайм-клуб, открылся в июле.</p>
           <p class="tip"><b>Тайминг:</b> к полуночи, когда подтянется фестивальная толпа. Если BPM-сцена ничего не говорит — выбирай Кролл.</p>
-          <footer class="meta-row">
+          </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M317,130 A120,120 0 0 1 317,314" stroke="var(--accent)" stroke-width="3" fill="none" opacity="0.75"/>
+  <path d="M349,92 A170,170 0 0 1 349,352" stroke="var(--ink)" stroke-width="2.5" fill="none" opacity="0.5"/>
+  <path d="M385,50 A225,225 0 0 1 385,394" stroke="var(--line)" stroke-width="2.5" fill="none" opacity="0.5"/>
+  <path d="M420,8 A280,280 0 0 1 420,436" stroke="var(--line)" stroke-width="2" fill="none" opacity="0.3"/>
+  <rect x="150" y="54" width="180" height="286" rx="14" fill="var(--ink)" fill-opacity="0.1" stroke="var(--ink)" stroke-width="2.5"/>
+  <circle cx="240" cy="116" r="28" stroke="var(--ink)" stroke-width="2.5" fill="var(--ink)" fill-opacity="0.15"/>
+  <circle cx="240" cy="116" r="7" fill="var(--ink)" fill-opacity="0.55"/>
+  <circle cx="240" cy="222" r="58" stroke="var(--ink)" stroke-width="2.5" fill="var(--ink)" fill-opacity="0.15"/>
+  <circle cx="240" cy="222" r="24" stroke="var(--ink)" stroke-width="2" fill="none" opacity="0.6"/>
+  <circle cx="240" cy="222" r="18" fill="var(--accent)" fill-opacity="0.2"/>
+  <circle cx="240" cy="222" r="9" fill="var(--accent)" fill-opacity="0.85"/>
+  <g fill="var(--ink)" fill-opacity="0.85">
+    <rect x="0" y="334" width="640" height="26"/>
+    <circle cx="40" cy="322" r="15"/><circle cx="96" cy="330" r="15"/><circle cx="152" cy="321" r="15"/>
+    <circle cx="208" cy="331" r="15"/><circle cx="264" cy="323" r="15"/><circle cx="320" cy="330" r="15"/>
+    <circle cx="376" cy="322" r="15"/><circle cx="432" cy="331" r="15"/><circle cx="488" cy="323" r="15"/>
+    <circle cx="544" cy="330" r="15"/><circle cx="600" cy="322" r="15"/>
+    <path d="M18,340 L28,272 L40,274 L34,340 Z"/><circle cx="36" cy="266" r="7"/>
+    <path d="M124,340 L110,272 L122,268 L134,340 Z"/><circle cx="114" cy="262" r="7"/>
+    <path d="M232,340 L244,258 L256,260 L248,340 Z"/><circle cx="252" cy="252" r="7"/>
+    <path d="M292,340 L286,276 L298,274 L302,340 Z"/><circle cx="291" cy="268" r="7"/>
+    <path d="M348,340 L362,262 L374,266 L364,340 Z"/><circle cx="370" cy="256" r="7"/>
+    <path d="M404,340 L398,284 L410,282 L414,340 Z"/><circle cx="403" cy="276" r="7"/>
+    <path d="M460,340 L474,266 L486,270 L474,340 Z"/><circle cx="482" cy="260" r="7"/>
+    <path d="M516,340 L508,254 L520,252 L528,340 Z"/><circle cx="513" cy="246" r="7"/>
+    <path d="M568,340 L580,272 L592,276 L582,340 Z"/><circle cx="588" cy="266" r="7"/>
+    <path d="M614,340 L610,278 L622,278 L620,340 Z"/><circle cx="616" cy="270" r="7"/>
+  </g>
+</svg></div></div>
+        <footer class="meta-row">
             <div class="meta"><span><b>Карасунская, 78</b></span><span>с 22:00</span></div>
             <div class="actions"><a class="link" href="https://krasnodar.qtickets.events/252062-bpm-fest-afterparty-thrill-pill" target="_blank" rel="noopener">билеты ↗</a><button class="pick" type="button">В план</button></div>
           </footer>
         </article>
 
         <article class="card" data-id="secret" data-sec="Ночь" data-name="Secret Place · опен-эйр">
+        <div class="card-grid"><div class="card-body">
           <header class="card-head">
             <span class="rank">C</span>
             <div class="card-title"><span class="genre">House → techno после 01:00 · опен-эйр</span><h3 class="venue">Secret Place</h3></div>
@@ -811,7 +1714,35 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
           <div class="chips"><span class="chip ok">вход свободный</span><span class="chip plain">до 06:00</span></div>
           <p class="why">Единственный настоящий рейв на сегодня: поляна у озера, 6 кВт звука, десяток диджеев, купание, палатки и барбекю-зоны.</p>
           <p class="tip"><b>Знать:</b> еду, напитки и плед везёшь с собой. После Ryotei в красивой одежде туда не надо. Координаты — в телеграме организаторов.</p>
-          <footer class="meta-row">
+          </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <path d="M152,40 A32,32 0 1 0 152,104 A40,40 0 0 1 152,40 Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <g fill="var(--ink)" fill-opacity="0.5">
+    <circle cx="240" cy="50" r="2"/><circle cx="320" cy="90" r="1.6"/><circle cx="430" cy="40" r="2"/>
+    <circle cx="560" cy="80" r="1.6"/><circle cx="60" cy="130" r="1.6"/><circle cx="500" cy="128" r="2"/>
+  </g>
+  <path d="M0,216 C110,188 240,208 360,192 C470,178 560,198 640,188 L640,226 L0,226 Z" fill="var(--muted)" fill-opacity="0.25"/>
+  <g fill="var(--muted)" fill-opacity="0.45">
+    <path d="M46,216 L54,192 L62,216 Z"/>
+    <path d="M70,216 L79,186 L88,216 Z"/>
+    <path d="M96,216 L103,196 L110,216 Z"/>
+  </g>
+  <line x1="0" y1="226" x2="640" y2="226" stroke="var(--line)" stroke-width="2" opacity="0.55"/>
+  <g stroke="var(--ink)" stroke-width="2.5" opacity="0.3">
+    <path d="M124,246 H160"/><path d="M132,260 H152"/><path d="M138,274 H148"/>
+  </g>
+  <path d="M0,360 V322 C140,310 250,326 390,316 C500,308 580,318 640,312 V360 Z" fill="var(--ink)" fill-opacity="0.22"/>
+  <g fill="none">
+    <ellipse cx="472" cy="330" rx="70" ry="12" stroke="var(--accent)" stroke-width="2.5" opacity="0.5"/>
+    <ellipse cx="472" cy="330" rx="130" ry="24" stroke="var(--accent)" stroke-width="2" opacity="0.22"/>
+    <ellipse cx="472" cy="330" rx="195" ry="38" stroke="var(--line)" stroke-width="2" opacity="0.4"/>
+    <ellipse cx="472" cy="330" rx="260" ry="52" stroke="var(--line)" stroke-width="2" opacity="0.25"/>
+  </g>
+  <circle cx="472" cy="314" r="80" fill="var(--accent)" fill-opacity="0.06"/>
+  <circle cx="472" cy="314" r="46" fill="var(--accent)" fill-opacity="0.12"/>
+  <path d="M420,344 L472,258 L524,344 Z" fill="var(--ink)" fill-opacity="0.85"/>
+  <path d="M456,344 L472,298 L488,344 Z" fill="var(--accent)" fill-opacity="0.85"/>
+</svg></div></div>
+        <footer class="meta-row">
             <div class="meta"><span><b>поляна у озера</b></span><span>идёт до 06:00 утра</span></div>
             <div class="actions"><a class="link" href="https://t.me/secretplace_23" target="_blank" rel="noopener">координаты ↗</a><button class="pick" type="button">В план</button></div>
           </footer>
@@ -821,6 +1752,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
 
     <div class="cards">
       <article class="card" data-id="drunke" data-sec="Ночь" data-name="Mr. Drunke">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">1</span>
           <div class="card-title"><span class="genre">Гастропаб → клуб · барный квартал</span><h3 class="venue">Mr. Drunke</h3></div>
@@ -829,6 +1761,30 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip ok">пт-сб до 05:00</span><span class="chip warn">фейсконтроль</span></div>
         <p class="why">Старейший танцпол центра: в будни паб, в пт-сб полноценный ночной клуб. В двух шагах от всего барного квартала — естественный финал маршрута после 01:00.</p>
         <p class="tip"><b>Знать:</b> в спортивном не пустят, охрана с характером. Бронь стола превращает фейсконтроль в формальность.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <circle cx="440" cy="204" r="118" fill="var(--accent)" fill-opacity="0.06"/>
+  <line x1="170" y1="-8" x2="170" y2="56" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
+  <circle cx="170" cy="110" r="54" stroke="var(--ink)" stroke-width="2.5" fill="var(--ink)" fill-opacity="0.12"/>
+  <g stroke="var(--ink)" stroke-width="2" fill="none" opacity="0.5">
+    <path d="M120,94 Q170,112 220,94"/>
+    <path d="M123,130 Q170,147 217,130"/>
+    <path d="M170,56 Q136,110 170,164"/>
+    <path d="M170,56 Q204,110 170,164"/>
+  </g>
+  <g stroke="var(--accent)" stroke-width="2.5" opacity="0.7">
+    <path d="M228,78 L282,50"/><path d="M236,116 L304,132"/><path d="M204,162 L246,214"/>
+    <path d="M138,164 L106,220"/><path d="M112,116 L42,132"/><path d="M120,72 L64,42"/>
+    <path d="M196,52 L226,6"/><path d="M146,50 L124,4"/>
+  </g>
+  <g fill="var(--accent)" fill-opacity="0.8">
+    <circle cx="306" cy="42" r="3"/><circle cx="322" cy="150" r="3"/>
+    <circle cx="36" cy="146" r="3"/><circle cx="70" cy="36" r="3"/><circle cx="256" cy="236" r="3"/>
+  </g>
+  <path d="M440,96 C498,96 542,140 542,194 C542,246 500,294 440,310 C380,294 338,246 338,194 C338,140 382,96 440,96 Z" fill="var(--ink)" fill-opacity="0.88"/>
+  <path d="M382,192 C392,174 418,172 430,188 C426,210 398,220 386,212 C378,206 378,198 382,192 Z" fill="var(--surface2)" fill-opacity="0.9"/>
+  <path d="M498,192 C488,174 462,172 450,188 C454,210 482,220 494,212 C502,206 502,198 498,192 Z" fill="var(--surface2)" fill-opacity="0.9"/>
+  <line x1="140" y1="334" x2="560" y2="334" stroke="var(--line)" stroke-width="2" opacity="0.35"/>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красноармейская, 58</b></span><span>пт-сб до 05:00</span></div>
           <div class="actions"><button class="pick" type="button">В план</button></div>
@@ -836,6 +1792,7 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       </article>
 
       <article class="card" data-id="funky" data-sec="Ночь" data-name="Funky">
+        <div class="card-grid"><div class="card-body">
         <header class="card-head">
           <span class="rank">2</span>
           <div class="card-title"><span class="genre">Мейнстрим · большой танцпол до ~700 гостей</span><h3 class="venue">Funky</h3></div>
@@ -844,6 +1801,43 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
         <div class="chips"><span class="chip warn">охрана — рулетка</span></div>
         <p class="why">Самый большой надёжный танцпол: несколько баров, веранда, коммерческий хаус и хиты. Когда жанр не принципиален, а народ нужен гарантированно — после 00:00.</p>
         <p class="tip"><b>Знать:</b> в отзывах систематические жалобы на охрану (пускают за деньги, заворачивают по «дресс-коду»). Лечится бронью стола заранее.</p>
+        </div><div class="card-art"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" aria-hidden="true">
+  <line x1="320" y1="-8" x2="320" y2="27" stroke="var(--line)" stroke-width="2" opacity="0.6"/>
+  <circle cx="320" cy="120" r="95" stroke="var(--ink)" stroke-width="2.5" fill="var(--ink)" fill-opacity="0.12"/>
+  <g stroke="var(--ink)" stroke-width="2" fill="none" opacity="0.45">
+    <path d="M245,60 Q320,80 395,60"/>
+    <path d="M231,88 Q320,114 409,88"/>
+    <path d="M231,152 Q320,178 409,152"/>
+    <path d="M256,190 Q320,208 384,190"/>
+    <path d="M320,25 Q252,120 320,215"/>
+    <path d="M320,25 Q388,120 320,215"/>
+    <path d="M320,25 Q210,120 320,215"/>
+    <path d="M320,25 Q430,120 320,215"/>
+  </g>
+  <path d="M0,-10 Q2,-2 10,0 Q2,2 0,10 Q-2,2 -10,0 Q-2,-2 0,-10 Z" transform="translate(283,78)" fill="var(--accent)" fill-opacity="0.8"/>
+  <path d="M0,-10 Q2,-2 10,0 Q2,2 0,10 Q-2,2 -10,0 Q-2,-2 0,-10 Z" transform="translate(357,143) scale(0.8)" fill="var(--accent)" fill-opacity="0.8"/>
+  <g fill="var(--accent)" fill-opacity="0.8">
+    <circle cx="96" cy="150" r="3.5"/><circle cx="176" cy="224" r="3.5"/><circle cx="520" cy="104" r="3.5"/>
+    <circle cx="556" cy="204" r="3.5"/><circle cx="452" cy="60" r="3.5"/>
+    <rect x="-3.5" y="-3.5" width="7" height="7" transform="translate(130,84) rotate(25)"/>
+    <rect x="-3.5" y="-3.5" width="7" height="7" transform="translate(500,250) rotate(-15)"/>
+  </g>
+  <g fill="var(--ink)" fill-opacity="0.45">
+    <circle cx="60" cy="110" r="3"/><circle cx="232" cy="250" r="3"/><circle cx="586" cy="150" r="3"/><circle cx="420" cy="250" r="3"/>
+  </g>
+  <line x1="16" y1="352" x2="624" y2="352" stroke="var(--line)" stroke-width="2" opacity="0.5"/>
+  <g fill="var(--ink)" fill-opacity="0.5">
+    <rect x="70" y="256" width="32" height="96" rx="3"/><rect x="162" y="228" width="32" height="124" rx="3"/>
+    <rect x="254" y="220" width="32" height="132" rx="3"/><rect x="346" y="236" width="32" height="116" rx="3"/>
+    <rect x="438" y="214" width="32" height="138" rx="3"/><rect x="530" y="252" width="32" height="100" rx="3"/>
+  </g>
+  <g fill="var(--muted)" fill-opacity="0.4">
+    <rect x="24" y="294" width="32" height="58" rx="3"/><rect x="116" y="308" width="32" height="44" rx="3"/>
+    <rect x="208" y="276" width="32" height="76" rx="3"/><rect x="300" y="204" width="32" height="148" rx="3"/>
+    <rect x="392" y="302" width="32" height="50" rx="3"/><rect x="484" y="280" width="32" height="72" rx="3"/>
+    <rect x="576" y="298" width="32" height="54" rx="3"/>
+  </g>
+</svg></div></div>
         <footer class="meta-row">
           <div class="meta"><span><b>Красная, 67</b></span><span>сб до ~06:00</span></div>
           <div class="actions"><a class="link" href="https://2gis.ru/krasnodar/firm/70000001062411946" target="_blank" rel="noopener">2ГИС ↗</a><button class="pick" type="button">В план</button></div>
@@ -1010,6 +2004,24 @@ footer.colophon .wrap { display: flex; justify-content: space-between; gap: 20px
       });
     }, { rootMargin: '-25% 0px -65% 0px' });
     secs.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* evening sky: dusk fades into night as you approach the night section */
+  var nightSec = document.getElementById('night');
+  if (nightSec) {
+    var ticking = false;
+    var setNight = function () {
+      ticking = false;
+      var r = nightSec.getBoundingClientRect();
+      var vh = window.innerHeight || 1;
+      var p = 1 - (r.top - vh * 0.15) / (vh * 1.6);
+      p = Math.max(0, Math.min(1, p));
+      document.documentElement.style.setProperty('--nightp', p.toFixed(3));
+    };
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(setNight); }
+    }, { passive: true });
+    setNight();
   }
 
   /* reveal on scroll */
